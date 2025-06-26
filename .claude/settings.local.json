@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:developer.chrome.com)",
+      "WebFetch(domain:claude.ai)"
+    ],
+    "deny": []
+  }
+}

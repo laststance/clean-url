@@ -1,0 +1,12 @@
+{
+  "name": "clean-url",
+  "version": "1.0.0",
+  "description": "Removes tracking parameters from url",
+  "license": "ISC",
+  "author": "Ryota Murakami <dojce1048@gmail.com> (https://github.com/ryota-murakami)",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
