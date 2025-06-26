@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clean URL</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1 class="title">Clean URL</h1>
+      <p class="subtitle">Remove tracking parameters</p>
+    </header>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="loading-state">
+      <div class="spinner"></div>
+      <p>Analyzing URL...</p>
+    </div>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content" style="display: none;">
+      
+      <!-- Current URL Section -->
+      <section class="url-section">
+        <h2 class="section-title">Current URL</h2>
+        <div class="url-display">
+          <div id="original-url" class="url-text"></div>
+          <button id="copy-original" class="copy-btn" title="Copy original URL">
+            <span class="copy-icon">📋</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Results Section -->
+      <section id="results-section" class="results-section">
+        
+        <!-- Success State -->
+        <div id="success-state" class="success-state" style="display: none;">
+          <div class="status-indicator success">
+            <span class="status-icon">✅</span>
+            <span id="removed-count" class="status-text">0 tracking parameters removed</span>
+          </div>
+          
+          <div class="cleaned-url-container">
+            <h3 class="section-title">Cleaned URL</h3>
+            <div class="url-display">
+              <div id="cleaned-url" class="url-text"></div>
+              <button id="copy-cleaned" class="copy-btn" title="Copy cleaned URL">
+                <span class="copy-icon">📋</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button id="apply-clean-url" class="primary-btn">
+              Apply Cleaned URL
+            </button>
+          </div>
+
+          <!-- Removed Parameters Details -->
+          <details id="removed-params-details" class="details-section">
+            <summary class="details-summary">View removed parameters</summary>
+            <div id="removed-params-list" class="params-list"></div>
+          </details>
+        </div>
+
+        <!-- No Changes State -->
+        <div id="no-changes-state" class="no-changes-state" style="display: none;">
+          <div class="status-indicator info">
+            <span class="status-icon">ℹ️</span>
+            <span class="status-text">URL is already clean</span>
+          </div>
+          <p class="info-text">No tracking parameters found in this URL.</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error-state" class="error-state" style="display: none;">
+          <div class="status-indicator error">
+            <span class="status-icon">❌</span>
+            <span class="status-text">Unable to process URL</span>
+          </div>
+          <p id="error-message" class="error-text"></p>
+        </div>
+
+      </section>
+
+      <!-- Statistics Section -->
+      <section id="stats-section" class="stats-section" style="display: none;">
+        <h3 class="section-title">Tracking Analysis</h3>
+        <div id="stats-grid" class="stats-grid"></div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-links">
+        <a href="#" id="privacy-link" class="footer-link">Privacy</a>
+        <a href="#" id="help-link" class="footer-link">Help</a>
+      </div>
+      <div class="footer-text">
+        <span class="version">v1.0.0</span>
+      </div>
+    </footer>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="clean-url-logic.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
