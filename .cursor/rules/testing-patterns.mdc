@@ -1,0 +1,128 @@
+---
+globs: *.test.js,*.spec.js,tests/**/*.js
+description: Testing Patterns and Standards for Clean URL Extension
+---
+
+# Testing Patterns and Standards
+
+## Test Organization
+
+### Test Structure
+- **Unit Tests**: `tests/unit/` - Test individual functions in isolation
+- **E2E Tests**: `tests/e2e/` - Test complete user workflows with Playwright
+- **Test Data**: [tests/test-urls.json](mdc:tests/test-urls.json) - Comprehensive real-world URL fixtures
+
+### Test File Naming
+- Unit tests: `*.test.js` (e.g., `clean-url-logic.test.js`)
+- E2E tests: `*.spec.js` (e.g., `clean-url.spec.js`)
+- Test utilities: `fixtures.js`, `setup.js`, `global-*.js`
+
+## Unit Testing Standards (Jest)
+
+### Test Case Structure
+```javascript
+describe('Feature Name', () => {
+  test('should handle specific scenario', () => {
+    // Arrange
+    const input = 'test data';
+    
+    // Act
+    const result = functionUnderTest(input);
+    
+    // Assert
+    expect(result.success).toBe(true);
+    expect(result.cleanedUrl).toBe('expected result');
+  });
+});
+```
+
+### Required Test Coverage
+- **Happy Path**: Valid URLs with tracking parameters
+- **Edge Cases**: Empty strings, null, undefined, malformed URLs
+- **Error Handling**: Invalid input validation and error messages
+- **Performance**: Large URLs and many parameters
+- **Real-world Data**: Use fixtures from [test-urls.json](mdc:tests/test-urls.json)
+
+### Test Data Usage
+- Load test fixtures: `const testUrls = require('../test-urls.json');`
+- Test each fixture: `Object.entries(testUrls).forEach(([name, testCase]) => ...)`
+- Verify expected results: `expect(result.removedCount).toBe(testCase.expectedRemovedCount);`
+
+## E2E Testing Standards (Playwright)
+
+### Extension Testing Setup
+- Use `fixtures.js` for extension loading and initialization
+- Test in clean browser context for each test
+- Handle extension permissions and Chrome APIs
+
+### User Workflow Testing
+1. **Extension Load**: Verify extension loads correctly
+2. **Icon Click**: Test popup opening and UI display
+3. **URL Cleaning**: Verify cleaning functionality end-to-end
+4. **Visual Feedback**: Check badge updates and user notifications
+5. **Navigation**: Test URL updates in browser address bar
+
+### Test Scenarios
+- Basic parameter removal with visual verification
+- Mixed parameters (tracking + legitimate)
+- Edge cases (no parameters, malformed URLs)
+- Performance testing with very long URLs
+- Cross-browser compatibility
+
+## Test Data Management
+
+### Fixture Requirements
+- **Comprehensive Coverage**: UTM, social media, email, affiliate trackers
+- **Real-world URLs**: Actual websites with tracking parameters
+- **Expected Results**: Include `original`, `expected`, `expectedRemovedCount`
+- **Test Descriptions**: Clear description of what each test validates
+
+### Test Data Structure
+```javascript
+{
+  "test_name": {
+    "original": "https://example.com?utm_source=test&param=value",
+    "expected": "https://example.com?param=value",
+    "expectedRemovedCount": 1,
+    "description": "Clear description of test scenario"
+  }
+}
+```
+
+## Performance Testing
+
+### Benchmarking
+- URL cleaning should complete in <100ms
+- Test with 100+ parameters
+- Memory usage with very long URLs
+- Batch processing performance
+
+### Load Testing
+- Test with realistic user interaction patterns
+- Verify no memory leaks in long-running tests
+- Performance regression detection
+
+## Error Testing
+
+### Input Validation
+- Test all invalid input types: `null`, `undefined`, `""`, `123`, `{}`
+- Verify structured error responses
+- Ensure no exceptions are thrown
+
+### Chrome Extension API Errors
+- Test permission denied scenarios
+- Handle tab access restrictions
+- Network connectivity issues
+
+## Test Utilities
+
+### Common Test Helpers
+- URL validation utilities
+- Chrome extension mocking
+- Performance measurement helpers
+- Error message validation
+
+### Setup and Teardown
+- Clean browser state between tests
+- Reset extension state
+- Clear test data and temporary files

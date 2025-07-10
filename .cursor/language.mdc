@@ -1,0 +1,14 @@
+# Language Specification
+
+All code comments and documentation must be written in **English**.
+
+This includes:
+- Inline code comments
+- Function documentation
+- Variable and function names
+- Error messages
+- Test descriptions
+- README content
+- Documentation files
+
+Use clear, professional English for all technical communication in the codebase.

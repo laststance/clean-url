@@ -1,0 +1,61 @@
+---
+globs: *.js
+description: JavaScript Code Style and Standards for Clean URL Extension
+---
+
+# JavaScript Code Style Guidelines
+
+## Code Structure and Organization
+
+### Function Naming
+- Use descriptive, camelCase function names
+- Core functions: `cleanUrl()`, `analyzeUrl()`, `isValidUrl()`
+- Result objects should include: `{ success, cleanedUrl, removedCount, hasChanges, error }`
+
+### Error Handling
+- Always return structured result objects, never throw exceptions
+- Include `success: boolean` and `error: string` properties
+- Handle invalid URLs gracefully with meaningful error messages
+
+### Chrome Extension API Usage
+- Use `chrome.tabs.update()` for URL navigation
+- Handle permission errors with user-friendly messages
+- Use `chrome.action.setBadgeText()` for visual feedback
+
+## URL Processing Standards
+
+### Parameter Removal Logic
+- Use case-insensitive matching for tracking parameters
+- Preserve legitimate parameters (functional, not tracking)
+- Maintain URL structure including fragments (#) and paths
+- Return count of removed parameters for user feedback
+
+### Validation Requirements
+- Validate URLs using `new URL()` constructor
+- Check for required protocols (http/https)
+- Handle edge cases: empty strings, null, undefined
+- Sanitize input before processing
+
+## Testing Integration
+- Write testable, pure functions when possible
+- Use structured test data from [test-urls.json](mdc:tests/test-urls.json)
+- Include performance tests for large URLs
+- Test edge cases and error conditions
+
+## Browser Compatibility
+- Compatible with Manifest V3 service workers
+- Use modern JavaScript features (ES6+)
+- Avoid deprecated Chrome extension APIs
+- Handle cross-origin restrictions appropriately
+
+## Performance Considerations
+- Use efficient regex patterns for parameter matching
+- Avoid excessive string manipulation
+- Complete URL cleaning within 100ms for good UX
+- Memory efficient handling of large URLs
+
+## Security Guidelines
+- Never execute user-provided code
+- Sanitize all URL inputs
+- Use Content Security Policy compliant code
+- No inline scripts or eval() usage

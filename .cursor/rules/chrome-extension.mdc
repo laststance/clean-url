@@ -1,0 +1,135 @@
+---
+globs: manifest.json,popup.*,background.js
+description: Chrome Extension Development Standards for Clean URL Extension
+---
+
+# Chrome Extension Development Standards
+
+## Manifest V3 Configuration
+
+### Required Fields in [manifest.json](mdc:manifest.json)
+- **manifest_version**: Must be 3 (latest standard)
+- **name**: "Clean URL" - Keep concise and descriptive
+- **version**: Follow semantic versioning (e.g., "1.0.0")
+- **description**: Clear explanation of URL cleaning functionality
+- **permissions**: Only `["tabs"]` for tab access and URL updating
+
+### Extension Structure
+```json
+{
+  "manifest_version": 3,
+  "name": "Clean URL",
+  "version": "1.0.0",
+  "description": "Remove tracking parameters from URLs",
+  "permissions": ["tabs"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Clean URL"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
+```
+
+## Popup Interface Standards
+
+### HTML Structure ([popup.html](mdc:popup.html))
+- **Minimal DOM**: Keep popup lightweight and fast
+- **Clear UI Elements**: Display original URL, cleaned URL, and removal count
+- **Responsive Design**: Work well in small popup window
+- **Error Handling**: Show user-friendly error messages
+
+### CSS Styling ([popup.css](mdc:popup.css))
+- **Compact Layout**: Popup should be ~300px wide, appropriate height
+- **Chrome Theme**: Use Chrome's extension UI patterns
+- **Accessibility**: Proper contrast ratios and focusable elements
+- **No External Resources**: All CSS must be inline or in separate file
+
+### JavaScript Logic ([popup.js](mdc:popup.js))
+- **Fast Loading**: Initialize popup within 100ms
+- **Chrome API Usage**: Use `chrome.tabs.query()` to get current tab
+- **URL Processing**: Import and use [clean-url-logic.js](mdc:clean-url-logic.js)
+- **User Feedback**: Show processing status and results
+- **Error Handling**: Graceful handling of permission issues
+
+## Background Script Standards
+
+### Service Worker ([background.js](mdc:background.js))
+- **Manifest V3 Compatible**: Use service worker, not background page
+- **Event-Driven**: Only respond to necessary extension events
+- **Badge Updates**: Use `chrome.action.setBadgeText()` for parameter count
+- **Minimal Functionality**: Keep background script lightweight
+
+### Event Handling
+- **Extension Install**: Initialize default settings
+- **Tab Updates**: Optional badge updates when parameters detected
+- **Action Clicks**: Handle extension icon clicks if needed
+
+## Chrome Extension API Usage
+
+### Tab Management
+- **Current Tab Access**: `chrome.tabs.query({active: true, currentWindow: true})`
+- **URL Updates**: `chrome.tabs.update(tabId, {url: cleanedUrl})`
+- **Permission Handling**: Check for tab permissions before API calls
+
+### Storage (if needed)
+- **chrome.storage.local**: For user preferences
+- **chrome.storage.sync**: For cross-device settings
+- **Minimal Storage**: Only store essential user settings
+
+### Security Best Practices
+- **Content Security Policy**: No inline scripts or eval()
+- **Minimal Permissions**: Only request necessary permissions
+- **Input Validation**: Sanitize all user inputs and URLs
+- **No External Requests**: Keep all functionality local
+
+## UI/UX Guidelines
+
+### Popup Design
+- **Fast Opening**: Popup should appear within 100ms
+- **Clear Information**: Show original URL, cleaned URL, removal count
+- **Action Buttons**: "Clean URL" button and optional "Copy" button
+- **Visual Feedback**: Loading states and success/error messages
+
+### User Flow
+1. **Click Extension Icon**: Opens popup with current tab URL
+2. **Show Analysis**: Display tracking parameters found
+3. **Clean URL**: Button to remove parameters and update tab
+4. **Confirmation**: Show success message with removal count
+
+### Error States
+- **Invalid URLs**: "Cannot clean this URL" with explanation
+- **No Parameters**: "URL is already clean" message
+- **Permission Denied**: Guide user to grant permissions
+- **Network Issues**: Appropriate offline messages
+
+## Testing Requirements
+
+### Extension Testing
+- **Loading**: Verify extension loads without errors
+- **Popup Functionality**: Test popup opening and UI display
+- **URL Cleaning**: End-to-end cleaning functionality
+- **Permissions**: Test permission handling
+- **Cross-browser**: Test in Chrome, Edge, other Chromium browsers
+
+### Performance Requirements
+- **Popup Load Time**: <100ms from click to display
+- **URL Processing**: <100ms for cleaning operation
+- **Memory Usage**: Minimal background memory footprint
+- **Battery Impact**: No unnecessary background processing
+
+## Publishing Preparation
+
+### Chrome Web Store Requirements
+- **Icons**: All required sizes (16px, 32px, 48px, 128px)
+- **Screenshots**: At least 1280x800px showing actual functionality
+- **Description**: Clear explanation of tracking parameter removal
+- **Privacy Policy**: Required for extensions accessing tab data
+- **Permissions Justification**: Explain why tabs permission is needed
