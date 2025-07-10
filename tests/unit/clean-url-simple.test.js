@@ -97,6 +97,75 @@ describe('Clean URL Logic - Core Tests', () => {
 
 });
 
+describe('Real-world Newsletter URL Tests', () => {
+  
+  test('should clean DevonGovett blog URL with ConvertKit tracking', () => {
+    const originalUrl = 'https://devongovett.me/blog/scope-hoisting.html?ck_subscriber_id=1866526852&utm_source=convertkit&utm_medium=email&utm_campaign=%E2%9A%9B%EF%B8%8F%20This%20Week%20In%20React%20#242:%20Vite%20RSC,%20Next.js,%20NuxtLabs,%20shadcn,%20TanStack,%20Valtio,%20XState,%20RHF%20%7C%20Unistyles,%20Rag,%20Shadow%20Insets,%20Ignite,%20Metro,%20RN%200.81%20RC%20%7C%20TypeScript,%20CSS%20Gaps,%20Browserlist-rs,%20Biome,%20Astro,%20esbuild%20-%2018236230';
+    const result = cleanUrl(originalUrl);
+    
+    expect(result.success).toBe(true);
+    expect(result.cleanedUrl).toBe('https://devongovett.me/blog/scope-hoisting.html');
+    expect(result.removedCount).toBe(4);
+    expect(result.cleanedUrl).not.toContain('ck_subscriber_id');
+    expect(result.cleanedUrl).not.toContain('utm_source');
+    expect(result.cleanedUrl).not.toContain('utm_medium');
+    expect(result.cleanedUrl).not.toContain('utm_campaign');
+  });
+
+  test('should clean Frontend Masters blog URL with ConvertKit tracking', () => {
+    const originalUrl = 'https://frontendmasters.com/blog/satisfies-in-typescript/?ck_subscriber_id=1866526852&utm_source=convertkit&utm_medium=email&utm_campaign=%E2%9A%9B%EF%B8%8F%20This%20Week%20In%20React%20#242:%20Vite%20RSC,%20Next.js,%20NuxtLabs,%20shadcn,%20TanStack,%20Valtio,%20XState,%20RHF%20%7C%20Unistyles,%20Rag,%20Shadow%20Insets,%20Ignite,%20Metro,%20RN%200.81%20RC%20%7C%20TypeScript,%20CSS%20Gaps,%20Browserlist-rs,%20Biome,%20Astro,%20esbuild%20-%2018236230';
+    const result = cleanUrl(originalUrl);
+    
+    expect(result.success).toBe(true);
+    expect(result.cleanedUrl).toBe('https://frontendmasters.com/blog/satisfies-in-typescript/');
+    expect(result.removedCount).toBe(4);
+    expect(result.cleanedUrl).not.toContain('ck_subscriber_id');
+    expect(result.cleanedUrl).not.toContain('utm_source');
+    expect(result.cleanedUrl).not.toContain('utm_medium');
+    expect(result.cleanedUrl).not.toContain('utm_campaign');
+  });
+
+  test('should clean Shadcn UI docs URL with ConvertKit tracking', () => {
+    const originalUrl = 'https://ui.shadcn.com/docs/changelog?ck_subscriber_id=1866526852&utm_source=convertkit&utm_medium=email&utm_campaign=%E2%9A%9B%EF%B8%8F%20This%20Week%20In%20React%20#242:%20Vite%20RSC,%20Next.js,%20NuxtLabs,%20shadcn,%20TanStack,%20Valtio,%20XState,%20RHF%20%7C%20Unistyles,%20Rag,%20Shadow%20Insets,%20Ignite,%20Metro,%20RN%200.81%20RC%20%7C%20TypeScript,%20CSS%20Gaps,%20Browserlist-rs,%20Biome,%20Astro,%20esbuild%20-%2018236230';
+    const result = cleanUrl(originalUrl);
+    
+    expect(result.success).toBe(true);
+    expect(result.cleanedUrl).toBe('https://ui.shadcn.com/docs/changelog');
+    expect(result.removedCount).toBe(4);
+    expect(result.cleanedUrl).not.toContain('ck_subscriber_id');
+    expect(result.cleanedUrl).not.toContain('utm_source');
+    expect(result.cleanedUrl).not.toContain('utm_medium');
+    expect(result.cleanedUrl).not.toContain('utm_campaign');
+  });
+
+  test('should clean GitHub issue URL with ConvertKit tracking', () => {
+    const originalUrl = 'https://github.com/vitejs/vite-plugin-react/issues/531?ck_subscriber_id=1866526852&utm_source=convertkit&utm_medium=email&utm_campaign=%E2%9A%9B%EF%B8%8F%20This%20Week%20In%20React%20#242:%20Vite%20RSC,%20Next.js,%20NuxtLabs,%20shadcn,%20TanStack,%20Valtio,%20XState,%20RHF%20%7C%20Unistyles,%20Rag,%20Shadow%20Insets,%20Ignite,%20Metro,%20RN%200.81%20RC%20%7C%20TypeScript,%20CSS%20Gaps,%20Browserlist-rs,%20Biome,%20Astro,%20esbuild%20-%2018236230';
+    const result = cleanUrl(originalUrl);
+    
+    expect(result.success).toBe(true);
+    expect(result.cleanedUrl).toBe('https://github.com/vitejs/vite-plugin-react/issues/531');
+    expect(result.removedCount).toBe(4);
+    expect(result.cleanedUrl).not.toContain('ck_subscriber_id');
+    expect(result.cleanedUrl).not.toContain('utm_source');
+    expect(result.cleanedUrl).not.toContain('utm_medium');
+    expect(result.cleanedUrl).not.toContain('utm_campaign');
+  });
+
+  test('should clean 56kode blog URL with ConvertKit tracking', () => {
+    const originalUrl = 'https://www.56kode.com/posts/level-up-react-deep-dive-into-state-and-usestate/?ck_subscriber_id=1866526852&utm_source=convertkit&utm_medium=email&utm_campaign=%E2%9A%9B%EF%B8%8F%20This%20Week%20In%20React%20#242:%20Vite%20RSC,%20Next.js,%20NuxtLabs,%20shadcn,%20TanStack,%20Valtio,%20XState,%20RHF%20%7C%20Unistyles,%20Rag,%20Shadow%20Insets,%20Ignite,%20Metro,%20RN%200.81%20RC%20%7C%20TypeScript,%20CSS%20Gaps,%20Browserlist-rs,%20Biome,%20Astro,%20esbuild%20-%2018236230';
+    const result = cleanUrl(originalUrl);
+    
+    expect(result.success).toBe(true);
+    expect(result.cleanedUrl).toBe('https://www.56kode.com/posts/level-up-react-deep-dive-into-state-and-usestate/');
+    expect(result.removedCount).toBe(4);
+    expect(result.cleanedUrl).not.toContain('ck_subscriber_id');
+    expect(result.cleanedUrl).not.toContain('utm_source');
+    expect(result.cleanedUrl).not.toContain('utm_medium');
+    expect(result.cleanedUrl).not.toContain('utm_campaign');
+  });
+
+});
+
 describe('Input Validation Tests', () => {
   
   test('should handle null input', () => {

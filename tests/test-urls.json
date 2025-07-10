@@ -118,5 +118,35 @@
     "expected": "https://api.staging.example.com/v1/data?version=1",
     "expectedRemovedCount": 2,
     "description": "Subdomain URL with tracking parameters"
+  },
+  "devongovett_blog": {
+    "original": "https://devongovett.me/blog/scope-hoisting.html?ck_subscriber_id=1866526852&utm_source=convertkit&utm_medium=email&utm_campaign=%E2%9A%9B%EF%B8%8F%20This%20Week%20In%20React%20#242:%20Vite%20RSC,%20Next.js,%20NuxtLabs,%20shadcn,%20TanStack,%20Valtio,%20XState,%20RHF%20%7C%20Unistyles,%20Rag,%20Shadow%20Insets,%20Ignite,%20Metro,%20RN%200.81%20RC%20%7C%20TypeScript,%20CSS%20Gaps,%20Browserlist-rs,%20Biome,%20Astro,%20esbuild%20-%2018236230",
+    "expected": "https://devongovett.me/blog/scope-hoisting.html",
+    "expectedRemovedCount": 4,
+    "description": "DevonGovett blog with ConvertKit and UTM tracking"
+  },
+  "frontendmasters_blog": {
+    "original": "https://frontendmasters.com/blog/satisfies-in-typescript/?ck_subscriber_id=1866526852&utm_source=convertkit&utm_medium=email&utm_campaign=%E2%9A%9B%EF%B8%8F%20This%20Week%20In%20React%20#242:%20Vite%20RSC,%20Next.js,%20NuxtLabs,%20shadcn,%20TanStack,%20Valtio,%20XState,%20RHF%20%7C%20Unistyles,%20Rag,%20Shadow%20Insets,%20Ignite,%20Metro,%20RN%200.81%20RC%20%7C%20TypeScript,%20CSS%20Gaps,%20Browserlist-rs,%20Biome,%20Astro,%20esbuild%20-%2018236230",
+    "expected": "https://frontendmasters.com/blog/satisfies-in-typescript/",
+    "expectedRemovedCount": 4,
+    "description": "Frontend Masters blog with ConvertKit and UTM tracking"
+  },
+  "shadcn_docs": {
+    "original": "https://ui.shadcn.com/docs/changelog?ck_subscriber_id=1866526852&utm_source=convertkit&utm_medium=email&utm_campaign=%E2%9A%9B%EF%B8%8F%20This%20Week%20In%20React%20#242:%20Vite%20RSC,%20Next.js,%20NuxtLabs,%20shadcn,%20TanStack,%20Valtio,%20XState,%20RHF%20%7C%20Unistyles,%20Rag,%20Shadow%20Insets,%20Ignite,%20Metro,%20RN%200.81%20RC%20%7C%20TypeScript,%20CSS%20Gaps,%20Browserlist-rs,%20Biome,%20Astro,%20esbuild%20-%2018236230",
+    "expected": "https://ui.shadcn.com/docs/changelog",
+    "expectedRemovedCount": 4,
+    "description": "Shadcn UI documentation with ConvertKit and UTM tracking"
+  },
+  "github_issue": {
+    "original": "https://github.com/vitejs/vite-plugin-react/issues/531?ck_subscriber_id=1866526852&utm_source=convertkit&utm_medium=email&utm_campaign=%E2%9A%9B%EF%B8%8F%20This%20Week%20In%20React%20#242:%20Vite%20RSC,%20Next.js,%20NuxtLabs,%20shadcn,%20TanStack,%20Valtio,%20XState,%20RHF%20%7C%20Unistyles,%20Rag,%20Shadow%20Insets,%20Ignite,%20Metro,%20RN%200.81%20RC%20%7C%20TypeScript,%20CSS%20Gaps,%20Browserlist-rs,%20Biome,%20Astro,%20esbuild%20-%2018236230",
+    "expected": "https://github.com/vitejs/vite-plugin-react/issues/531",
+    "expectedRemovedCount": 4,
+    "description": "GitHub issue with ConvertKit and UTM tracking"
+  },
+  "56kode_blog": {
+    "original": "https://www.56kode.com/posts/level-up-react-deep-dive-into-state-and-usestate/?ck_subscriber_id=1866526852&utm_source=convertkit&utm_medium=email&utm_campaign=%E2%9A%9B%EF%B8%8F%20This%20Week%20In%20React%20#242:%20Vite%20RSC,%20Next.js,%20NuxtLabs,%20shadcn,%20TanStack,%20Valtio,%20XState,%20RHF%20%7C%20Unistyles,%20Rag,%20Shadow%20Insets,%20Ignite,%20Metro,%20RN%200.81%20RC%20%7C%20TypeScript,%20CSS%20Gaps,%20Browserlist-rs,%20Biome,%20Astro,%20esbuild%20-%2018236230",
+    "expected": "https://www.56kode.com/posts/level-up-react-deep-dive-into-state-and-usestate/",
+    "expectedRemovedCount": 4,
+    "description": "56kode blog with ConvertKit and UTM tracking"
   }
 }

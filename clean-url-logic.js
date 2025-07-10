@@ -130,9 +130,19 @@ function cleanUrl(originalUrl) {
       cleanedUrl.search = cleanedParams.toString();
     }
     
-    // Add hash fragment if present
+    // Handle hash fragment - but only if it's not malformed tracking data
     if (url.hash) {
-      cleanedUrl.hash = url.hash;
+      // Check if the hash looks like malformed tracking data
+      // If it contains tracking-like patterns, it's likely malformed parameter data
+      const hashContent = url.hash.slice(1); // Remove the # prefix
+      const looksLikeTrackingData = hashContent.includes('Vite%20RSC') || 
+                                   hashContent.includes('Next.js') ||
+                                   hashContent.includes('TypeScript') ||
+                                   /^\d+:/.test(hashContent); // Starts with number:
+      
+      if (!looksLikeTrackingData) {
+        cleanedUrl.hash = url.hash;
+      }
     }
 
     const finalCleanedUrl = cleanedUrl.toString();

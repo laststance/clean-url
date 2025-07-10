@@ -1,3 +1,7 @@
+---
+alwaysApply: true
+description: Language
+---
 # Language Specification
 
 All code comments and documentation must be written in **English**.
