@@ -247,9 +247,19 @@ if (typeof module !== 'undefined' && module.exports) {
     isValidUrl,
     TRACKING_PARAM_PATTERNS
   };
-} else {
-  // Browser environment (Chrome extension)
+} else if (typeof window !== 'undefined') {
+  // Browser environment (Chrome extension popup/content scripts)
   window.CleanUrlLogic = {
+    cleanUrl,
+    cleanUrls,
+    analyzeUrl,
+    isValidUrl,
+    TRACKING_PARAM_PATTERNS
+  };
+} else {
+  // Service worker environment (background script)
+  // Make functions available globally in service worker scope
+  globalThis.CleanUrlLogic = {
     cleanUrl,
     cleanUrls,
     analyzeUrl,

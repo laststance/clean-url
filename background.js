@@ -4,7 +4,11 @@
  */
 
 // Import the URL cleaning logic for the service worker
-importScripts('clean-url-logic.js');
+try {
+  importScripts('clean-url-logic.js');
+} catch (error) {
+  console.error('Failed to load clean-url-logic.js:', error);
+}
 
 class CleanUrlBackground {
   constructor() {
@@ -12,6 +16,12 @@ class CleanUrlBackground {
   }
 
   init() {
+    // Check if CleanUrlLogic is available
+    if (typeof CleanUrlLogic === 'undefined') {
+      console.error('CleanUrlLogic is not available. Service worker may not function properly.');
+      return;
+    }
+    
     this.setupEventListeners();
     this.setupContextMenus();
   }
@@ -43,23 +53,31 @@ class CleanUrlBackground {
   }
 
   setupContextMenus() {
-    chrome.contextMenus.create({
-      id: 'clean-current-url',
-      title: 'Clean current URL',
-      contexts: ['page'],
-      documentUrlPatterns: ['http://*/*', 'https://*/*']
-    });
+    try {
+      // Remove existing context menus first (in case of reload)
+      chrome.contextMenus.removeAll(() => {
+        // Create new context menus
+        chrome.contextMenus.create({
+          id: 'clean-current-url',
+          title: 'Clean current URL',
+          contexts: ['page'],
+          documentUrlPatterns: ['http://*/*', 'https://*/*']
+        });
 
-    chrome.contextMenus.create({
-      id: 'clean-link-url',
-      title: 'Clean this link',
-      contexts: ['link'],
-      targetUrlPatterns: ['http://*/*', 'https://*/*']
-    });
+        chrome.contextMenus.create({
+          id: 'clean-link-url',
+          title: 'Clean this link',
+          contexts: ['link'],
+          targetUrlPatterns: ['http://*/*', 'https://*/*']
+        });
+      });
 
-    chrome.contextMenus.onClicked.addListener((info, tab) => {
-      this.handleContextMenuClick(info, tab);
-    });
+      chrome.contextMenus.onClicked.addListener((info, tab) => {
+        this.handleContextMenuClick(info, tab);
+      });
+    } catch (error) {
+      console.error('Error setting up context menus:', error);
+    }
   }
 
   handleInstallation(details) {
