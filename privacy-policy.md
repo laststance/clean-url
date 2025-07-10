@@ -146,9 +146,9 @@ Our tracking parameter removal logic is based on:
 
 For privacy-related questions or concerns:
 
-- **GitHub Issues**: [https://github.com/ryota-murakami/clean-url/issues](https://github.com/ryota-murakami/clean-url/issues)
+- **GitHub Issues**: [https://github.com/laststance/clean-url/issues](https://github.com/laststance/clean-url/issues)
 - **Email**: dojce1048@gmail.com
-- **Project Homepage**: [https://github.com/ryota-murakami/clean-url](https://github.com/ryota-murakami/clean-url)
+- **Project Homepage**: [https://github.com/laststance/clean-url](https://github.com/laststance/clean-url)
 
 ## Compliance and Certifications
 

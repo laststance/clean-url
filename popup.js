@@ -292,13 +292,13 @@ class CleanUrlPopup {
 
   openPrivacyPolicy() {
     chrome.tabs.create({
-      url: 'https://github.com/ryota-murakami/clean-url/blob/main/privacy-policy.md'
+              url: 'https://github.com/laststance/clean-url/blob/main/privacy-policy.md'
     });
   }
 
   openHelp() {
     chrome.tabs.create({
-      url: 'https://github.com/ryota-murakami/clean-url#readme'
+              url: 'https://github.com/laststance/clean-url#readme'
     });
   }
 }

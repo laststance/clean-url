@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Removes tracking parameters from url",
   "license": "ISC",
-  "author": "Ryota Murakami <dojce1048@gmail.com> (https://github.com/ryota-murakami)",
+  "author": "Ryota Murakami <dojce1048@gmail.com> (https://github.com/laststance)",
   "type": "module",
   "main": "index.js",
   "scripts": {

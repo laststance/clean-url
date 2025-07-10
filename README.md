@@ -52,7 +52,7 @@ A privacy-focused Chrome extension that removes tracking parameters from URLs wi
 ### For Developers
 1. Clone this repository:
    ```bash
-   git clone https://github.com/ryota-murakami/clean-url.git
+   git clone https://github.com/laststance/clean-url.git
    cd clean-url
    ```
 
@@ -184,7 +184,7 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 8. Create a Pull Request
 
 ### Reporting Issues
-- Use the [GitHub Issues](https://github.com/ryota-murakami/clean-url/issues) page
+- Use the [GitHub Issues](https://github.com/laststance/clean-url/issues) page
 - Provide detailed reproduction steps
 - Include browser version and extension version
 - Add example URLs that demonstrate the issue
@@ -197,8 +197,8 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 
 - [Chrome Web Store](https://chrome.google.com/webstore) (coming soon)
 - [Privacy Policy](privacy-policy.md)
-- [Bug Reports](https://github.com/ryota-murakami/clean-url/issues)
-- [Feature Requests](https://github.com/ryota-murakami/clean-url/issues)
+- [Bug Reports](https://github.com/laststance/clean-url/issues)
+- [Feature Requests](https://github.com/laststance/clean-url/issues)
 
 ## 📊 Statistics
 
