@@ -36,6 +36,6 @@
     "extension_pages": "script-src 'self'; object-src 'self';"
   },
   
-  "author": "Ryota Murakami",
+  "author": "Laststance.io",
   "homepage_url": "https://github.com/laststance/clean-url"
 }

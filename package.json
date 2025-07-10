@@ -14,12 +14,15 @@
     "test:coverage": "jest --coverage",
     "install:playwright": "playwright install",
     "lint": "eslint *.js tests/",
-    "build": "npm run test:unit",
+    "build": "npm run test:unit && rm -f clean-url-extension.zip && npx bestzip clean-url-extension.zip manifest.json popup.html popup.js popup.css background.js clean-url-logic.js icons/ privacy-policy.md && echo '✅ Chrome Extension ZIP created: clean-url-extension.zip'",
+    "build:zip": "rm -f clean-url-extension.zip && npx bestzip clean-url-extension.zip manifest.json popup.html popup.js popup.css background.js clean-url-logic.js icons/ privacy-policy.md",
+    "zip:check": "unzip -l clean-url-extension.zip",
     "validate": "npm run lint && npm run test:unit"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.0",
     "@types/chrome": "^0.0.258",
+    "bestzip": "^2.2.1",
     "eslint": "^8.55.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0"

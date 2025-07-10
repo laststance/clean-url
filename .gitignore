@@ -1,5 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+clean-url-extension.zip
 package-lock.json
 .eslintcache
 .env
