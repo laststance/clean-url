@@ -44,6 +44,8 @@ const TRACKING_PARAM_PATTERNS = [
   'ck_subscriber_id',  // ConvertKit
   'mc_cid',           // MailChimp Campaign ID
   'mc_eid',           // MailChimp Email ID
+  '_hsenc',           // HubSpot Email Encoding
+  '_hsmi',            // HubSpot Message ID
   
   // Analytics & other
   'sthash',     // ShareThis hash
@@ -216,7 +218,7 @@ function analyzeUrl(url) {
       categories.ads.push({ key, value });
     } else if (['ref', 'referral', 'affiliate_id', 'afid', 'click_id', 'clickid', 'subid', 'sub_id', 'partner_id', 'sr_share'].includes(paramLower)) {
       categories.affiliate.push({ key, value });
-    } else if (['ck_subscriber_id', 'mc_cid', 'mc_eid'].includes(paramLower)) {
+    } else if (['ck_subscriber_id', 'mc_cid', 'mc_eid', '_hsenc', '_hsmi'].includes(paramLower)) {
       categories.email.push({ key, value });
     } else {
       categories.analytics.push({ key, value });

@@ -210,6 +210,35 @@ describe('Clean URL Logic', () => {
 
   });
 
+  describe('HubSpot tracking parameters', () => {
+    test('should clean HubSpot tracking parameters', () => {
+      const url = 'https://ngrok.com/blog-post/self-hosted-local-ai-workflows-with-docker-n8n-ollama-and-ngrok-2025?utm_campaign=august_2025_newsletter&utm_medium=newsletter&_hsenc=p2ANqtz-8oH1Wg1z9Xerl6KzExNgza_GCHijNoPRtBwlAYpnmUg4J_zQgujEKv8TZdFwsqobD1dw8osq6f7pZue07q8zZ--rl5Mg&_hsmi=377631143&utm_content=homepage&utm_source=email';
+      const result = CleanUrlLogic.cleanUrl(url);
+      
+      expect(result.success).toBe(true);
+      expect(result.cleanedUrl).toBe('https://ngrok.com/blog-post/self-hosted-local-ai-workflows-with-docker-n8n-ollama-and-ngrok-2025');
+      expect(result.removedCount).toBe(6);
+      expect(result.removedParams).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ key: 'utm_campaign' }),
+          expect.objectContaining({ key: 'utm_medium' }),
+          expect.objectContaining({ key: '_hsenc' }),
+          expect.objectContaining({ key: '_hsmi' }),
+          expect.objectContaining({ key: 'utm_content' }),
+          expect.objectContaining({ key: 'utm_source' })
+        ])
+      );
+    });
+
+    test('should categorize HubSpot parameters as email tracking', () => {
+      const url = 'https://example.com?_hsenc=test123&_hsmi=456';
+      const result = CleanUrlLogic.analyzeUrl(url);
+      
+      expect(result.categories.email).toHaveLength(2);
+      expect(result.summary.email).toBe(2);
+    });
+  });
+
   describe('analyzeUrl function', () => {
     
     test('should provide detailed analysis of tracking parameters', () => {
@@ -312,7 +341,7 @@ describe('Clean URL Logic', () => {
     });
 
     test('should include email trackers', () => {
-      const emailParams = ['ck_subscriber_id', 'mc_cid', 'mc_eid'];
+      const emailParams = ['ck_subscriber_id', 'mc_cid', 'mc_eid', '_hsenc', '_hsmi'];
       
       emailParams.forEach(param => {
         expect(CleanUrlLogic.TRACKING_PARAM_PATTERNS).toContain(param);
