@@ -95,13 +95,13 @@ test.describe('Clean URL Extension E2E Tests', () => {
     await page.goto(originalUrl);
     
     // Wait for page to load
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     
     // Use extension to clean and apply URL
     await extensionFixture.cleanAndApplyUrl();
     
     // Wait for navigation
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     
     // Check that URL was updated
     const currentUrl = page.url();
@@ -150,12 +150,13 @@ test.describe('Clean URL Extension E2E Tests', () => {
       'https://example.com?utm_source=test',
       'https://httpbin.org/get?utm_medium=email&port=3000',
       'https://httpbin.org/anything/path?utm_campaign=test&valid=param',
-      'https://example.com/path?utm_source=test#section'
+      'https://example.com/path?utm_source=test#section',
+      'https://gemini.google.com/gem/storybook?utm_source=gemini&utm_medium=email&utm_campaign=august_classic_storybook'
     ];
     
     for (const url of testUrls) {
       await page.goto(url);
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
       
       const cleanedUrl = await extensionFixture.cleanCurrentUrl();
       

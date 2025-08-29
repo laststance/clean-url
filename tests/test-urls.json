@@ -148,5 +148,11 @@
     "expected": "https://www.56kode.com/posts/level-up-react-deep-dive-into-state-and-usestate/",
     "expectedRemovedCount": 4,
     "description": "56kode blog with ConvertKit and UTM tracking"
+  },
+  "gemini_storybook": {
+    "original": "https://gemini.google.com/gem/storybook?utm_source=gemini&utm_medium=email&utm_campaign=august_classic_storybook",
+    "expected": "https://gemini.google.com/gem/storybook",
+    "expectedRemovedCount": 3,
+    "description": "Gemini Storybook page with UTM tracking"
   }
 }
