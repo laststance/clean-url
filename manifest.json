@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Clean URL",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Remove tracking parameters from URLs with a single click. Cleaning UTM, social media, and affiliate tracking parameters.",
   
   "permissions": [

@@ -1,6 +1,6 @@
 {
   "name": "clean-url",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Removes tracking parameters from url",
   "license": "ISC",
   "author": "Ryota Murakami <dojce1048@gmail.com> (https://github.com/laststance)",
