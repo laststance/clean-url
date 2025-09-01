@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "WebFetch(domain:developer.chrome.com)",
-      "WebFetch(domain:claude.ai)"
+      "WebFetch(domain:claude.ai)",
+      "Bash(npx jest:*)"
     ],
     "deny": []
   }

@@ -52,7 +52,8 @@ const TRACKING_PARAM_PATTERNS = [
   'source',     // Standalone source parameter
   'campaign',   // Standalone campaign parameter
   'adgroup',
-  'adposition'
+  'adposition',
+  '_bhlid'      // BH List ID tracking parameter
 ];
 
 /**

@@ -154,5 +154,11 @@
     "expected": "https://gemini.google.com/gem/storybook",
     "expectedRemovedCount": 3,
     "description": "Gemini Storybook page with UTM tracking"
+  },
+  "uppy_io_bhlid": {
+    "original": "https://uppy.io/?_bhlid=792bd92a7e6c3ed99340d3aa3df7a8d920d124c4",
+    "expected": "https://uppy.io/",
+    "expectedRemovedCount": 1,
+    "description": "Uppy.io with _bhlid tracking parameter"
   }
 }
