@@ -27,6 +27,9 @@ const TRACKING_PARAM_PATTERNS = [
   'yclid',      // Yandex Click ID
   'dclid',      // DoubleClick Click ID
   'msclkid',    // Microsoft Click ID
+  'gad_source', // Google Ads source
+  'gad_campaignid', // Google Ads campaign ID
+  'gbraid',     // Google Ads gbraid
   
   // Affiliate & referral trackers
   'ref',

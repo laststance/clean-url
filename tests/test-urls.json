@@ -160,5 +160,11 @@
     "expected": "https://uppy.io/",
     "expectedRemovedCount": 1,
     "description": "Uppy.io with _bhlid tracking parameter"
+  },
+  "steelcase_google_ads": {
+    "original": "https://jp.steelcase.com/products/gesture?variant=43617303953575&country=JP&currency=JPY&gad_source=1&gad_campaignid=20006137389&gbraid=0AAAAAo1uSY1vbFGLS4q9E-MniPCO4J3hQ",
+    "expected": "https://jp.steelcase.com/products/gesture?variant=43617303953575&country=JP&currency=JPY",
+    "expectedRemovedCount": 3,
+    "description": "Steelcase product URL with Google Ads tracking parameters"
   }
 }
