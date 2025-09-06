@@ -1,15 +1,15 @@
 {
   "manifest_version": 3,
   "name": "Clean URL",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Remove tracking parameters from URLs with a single click. Cleaning UTM, social media, and affiliate tracking parameters.",
-  
+
   "permissions": [
     "tabs",
     "storage",
     "contextMenus"
   ],
-  
+
   "action": {
     "default_popup": "popup.html",
     "default_title": "Clean URL - Remove tracking parameters",
@@ -20,22 +20,22 @@
       "128": "icons/icon128.png"
     }
   },
-  
+
   "background": {
     "service_worker": "background.js"
   },
-  
+
   "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  
+
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self';"
   },
-  
+
   "author": "Laststance.io",
   "homepage_url": "https://github.com/laststance/clean-url"
 }
