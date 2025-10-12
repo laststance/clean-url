@@ -87,12 +87,74 @@ describe('Clean URL Logic - Core Tests', () => {
   test('should handle Google Click ID with legitimate parameter', () => {
     const originalUrl = 'https://store.example.com?gclid=TeSter-123_abc.def&product=laptop';
     const result = cleanUrl(originalUrl);
-    
+
     expect(result.success).toBe(true);
     expect(result.cleanedUrl).toBe('https://store.example.com/?product=laptop');
     expect(result.removedCount).toBe(1);
     expect(result.cleanedUrl).toContain('product=laptop');
     expect(result.cleanedUrl).not.toContain('gclid');
+  });
+
+});
+
+describe('Google Ads Search Parameters (Issue #1)', () => {
+
+  test('should clean comprehensive Google Ads search URL with all tracking parameters', () => {
+    // Real-world URL from GitHub issue #1
+    const originalUrl = 'https://mixpanel.com/compare/posthog/?utm_source=google&utm_medium=ppc&utm_campaign=APAC-Competitive-Search-EN-Exact-All-Devices&utm_source=google&utm_medium=cpc&utm_campaign=APAC-Competitive-Search-EN-Exact-All-Devices&utm_content=PostHog&utm_ad=766540614712&utm_term=posthog&matchtype=e&campaign_id=22010460477&ad_id=766540614712&gclid=CjwKCAjwlaTGBhANEiwAoRgXBU1m6NTENxdBAyV7Uj4boyYa-0xpOW9Suhq89T7ZTV7nv0drZKwK8hoCh_0QAvD_BwE&gad_source=1&gad_campaignid=22010460477&gbraid=0AAAAAD85aTZffck7MiJP3pnt5uLyOHmYK';
+    const result = cleanUrl(originalUrl);
+
+    expect(result.success).toBe(true);
+    expect(result.cleanedUrl).toBe('https://mixpanel.com/compare/posthog/');
+    expect(result.removedCount).toBeGreaterThan(10); // Should remove many tracking parameters
+    expect(result.hasChanges).toBe(true);
+
+    // Verify all tracking parameters are removed
+    expect(result.cleanedUrl).not.toContain('utm_source');
+    expect(result.cleanedUrl).not.toContain('utm_medium');
+    expect(result.cleanedUrl).not.toContain('utm_campaign');
+    expect(result.cleanedUrl).not.toContain('utm_content');
+    expect(result.cleanedUrl).not.toContain('utm_ad');
+    expect(result.cleanedUrl).not.toContain('utm_term');
+    expect(result.cleanedUrl).not.toContain('matchtype');
+    expect(result.cleanedUrl).not.toContain('campaign_id');
+    expect(result.cleanedUrl).not.toContain('ad_id');
+    expect(result.cleanedUrl).not.toContain('gclid');
+    expect(result.cleanedUrl).not.toContain('gad_source');
+    expect(result.cleanedUrl).not.toContain('gad_campaignid');
+    expect(result.cleanedUrl).not.toContain('gbraid');
+  });
+
+  test('should handle individual Google Ads parameters', () => {
+    const originalUrl = 'https://example.com/page?matchtype=e&campaign_id=123&ad_id=456&category=tech';
+    const result = cleanUrl(originalUrl);
+
+    expect(result.success).toBe(true);
+    expect(result.cleanedUrl).toBe('https://example.com/page?category=tech');
+    expect(result.removedCount).toBe(3);
+    expect(result.cleanedUrl).toContain('category=tech');
+    expect(result.cleanedUrl).not.toContain('matchtype');
+    expect(result.cleanedUrl).not.toContain('campaign_id');
+    expect(result.cleanedUrl).not.toContain('ad_id');
+  });
+
+  test('should handle utm_ad parameter', () => {
+    const originalUrl = 'https://example.com?utm_source=google&utm_ad=12345&page=home';
+    const result = cleanUrl(originalUrl);
+
+    expect(result.success).toBe(true);
+    expect(result.cleanedUrl).toBe('https://example.com/?page=home');
+    expect(result.removedCount).toBe(2);
+    expect(result.cleanedUrl).not.toContain('utm_ad');
+  });
+
+  test('should categorize Google Ads parameters correctly in analyzeUrl', () => {
+    const url = 'https://example.com?gclid=abc&matchtype=e&campaign_id=123&ad_id=456';
+    const result = analyzeUrl(url);
+
+    expect(result.success).toBe(true);
+    expect(result.summary.ads).toBe(4);
+    expect(result.categories.ads).toHaveLength(4);
   });
 
 });

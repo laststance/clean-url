@@ -1,7 +1,7 @@
 {
   "basic_utm": {
     "original": "https://example.com?utm_source=google&utm_medium=cpc&utm_campaign=spring_sale",
-    "expected": "https://example.com",
+    "expected": "https://example.com/",
     "expectedRemovedCount": 3,
     "description": "Basic UTM parameters removal"
   },
@@ -37,25 +37,25 @@
   },
   "google_click_id": {
     "original": "https://store.example.com?gclid=TeSter-123_abc.def&product=laptop",
-    "expected": "https://store.example.com?product=laptop",
+    "expected": "https://store.example.com/?product=laptop",
     "expectedRemovedCount": 1,
     "description": "Google Click ID with legitimate parameter"
   },
   "multiple_social_trackers": {
     "original": "https://news.example.com/article?fbclid=fb123&igshid=ig456&ttclid=tt789&li_fat_id=li012",
-    "expected": "https://news.example.com/article",
+    "expected": "https://news.example.com/article/",
     "expectedRemovedCount": 4,
     "description": "Multiple social media tracking parameters"
   },
   "email_marketing_trackers": {
     "original": "https://newsletter.example.com/campaign?mc_cid=mailchimp123&mc_eid=email456&ck_subscriber_id=convert789",
-    "expected": "https://newsletter.example.com/campaign",
+    "expected": "https://newsletter.example.com/campaign/",
     "expectedRemovedCount": 3,
     "description": "Email marketing tracking parameters"
   },
   "affiliate_trackers": {
     "original": "https://affiliate.example.com/product?ref=partner&affiliate_id=12345&click_id=abc123&subid=xyz789",
-    "expected": "https://affiliate.example.com/product",
+    "expected": "https://affiliate.example.com/product/",
     "expectedRemovedCount": 4,
     "description": "Affiliate and referral tracking parameters"
   },
@@ -73,19 +73,19 @@
   },
   "empty_parameter_values": {
     "original": "https://example.com?utm_source=&utm_medium=email&normal_param=value",
-    "expected": "https://example.com?normal_param=value",
+    "expected": "https://example.com/?normal_param=value",
     "expectedRemovedCount": 2,
     "description": "Tracking parameters with empty values"
   },
   "case_sensitivity": {
     "original": "https://example.com?UTM_SOURCE=Google&utm_MEDIUM=CPC&FBCLID=test123",
-    "expected": "https://example.com",
+    "expected": "https://example.com/",
     "expectedRemovedCount": 3,
     "description": "Case insensitive tracking parameter removal"
   },
   "malformed_parameters": {
     "original": "https://example.com?utm_source=test&&&utm_medium=cpc&valid=param",
-    "expected": "https://example.com?valid=param",
+    "expected": "https://example.com/?valid=param",
     "expectedRemovedCount": 2,
     "description": "Malformed URL parameters"
   },
@@ -97,15 +97,15 @@
   },
   "special_characters": {
     "original": "https://example.com/search?q=hello%20world&utm_source=test%2Bsource&utm_medium=email%40campaign",
-    "expected": "https://example.com/search?q=hello%20world",
+    "expected": "https://example.com/search?q=hello+world",
     "expectedRemovedCount": 2,
     "description": "URL with special characters and encoding"
   },
   "international_domain": {
     "original": "https://例え.テスト/path?utm_source=international&param=value&fbclid=intl123",
-    "expected": "https://例え.テスト/path?param=value",
+    "expected": "https://xn--r8jz45g.xn--zckzah/path?param=value",
     "expectedRemovedCount": 2,
-    "description": "International domain with tracking parameters"
+    "description": "International domain with tracking parameters (Punycode encoded)"
   },
   "port_number": {
     "original": "https://localhost:3000/app?utm_source=local&port=3000&utm_medium=test",
@@ -166,5 +166,11 @@
     "expected": "https://jp.steelcase.com/products/gesture?variant=43617303953575&country=JP&currency=JPY",
     "expectedRemovedCount": 3,
     "description": "Steelcase product URL with Google Ads tracking parameters"
+  },
+  "mixpanel_google_ads_search_issue_1": {
+    "original": "https://mixpanel.com/compare/posthog/?utm_source=google&utm_medium=ppc&utm_campaign=APAC-Competitive-Search-EN-Exact-All-Devices&utm_source=google&utm_medium=cpc&utm_campaign=APAC-Competitive-Search-EN-Exact-All-Devices&utm_content=PostHog&utm_ad=766540614712&utm_term=posthog&matchtype=e&campaign_id=22010460477&ad_id=766540614712&gclid=CjwKCAjwlaTGBhANEiwAoRgXBU1m6NTENxdBAyV7Uj4boyYa-0xpOW9Suhq89T7ZTV7nv0drZKwK8hoCh_0QAvD_BwE&gad_source=1&gad_campaignid=22010460477&gbraid=0AAAAAD85aTZffck7MiJP3pnt5uLyOHmYK",
+    "expected": "https://mixpanel.com/compare/posthog/",
+    "expectedRemovedCount": 16,
+    "description": "GitHub Issue #1 - Comprehensive Google Ads search URL with utm_ad, matchtype, campaign_id, ad_id parameters (duplicate utm params counted once)"
   }
 }

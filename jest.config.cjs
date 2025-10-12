@@ -11,7 +11,7 @@ module.exports = {
   
   // Test file patterns
   testMatch: [
-    '**/tests/unit/*simple*.test.js'
+    '**/tests/unit/**/*.test.js'
   ],
   
   // Module file extensions

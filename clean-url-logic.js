@@ -30,6 +30,10 @@ const TRACKING_PARAM_PATTERNS = [
   'gad_source', // Google Ads source
   'gad_campaignid', // Google Ads campaign ID
   'gbraid',     // Google Ads gbraid
+  'utm_ad',     // UTM ad identifier
+  'matchtype',  // Google Ads match type (exact/broad/phrase)
+  'campaign_id', // Generic campaign identifier
+  'ad_id',      // Generic ad identifier
   
   // Affiliate & referral trackers
   'ref',
@@ -218,7 +222,7 @@ function analyzeUrl(url) {
       categories.utm.push({ key, value });
     } else if (['fbclid', 'igshid', 'ttclid', 'tiktok_r', 'li_fat_id', 'mkt_tok', 'trk'].includes(paramLower)) {
       categories.social.push({ key, value });
-    } else if (['gclid', 'yclid', 'dclid', 'msclkid'].includes(paramLower)) {
+    } else if (['gclid', 'yclid', 'dclid', 'msclkid', 'gad_source', 'gad_campaignid', 'gbraid', 'utm_ad', 'matchtype', 'campaign_id', 'ad_id'].includes(paramLower)) {
       categories.ads.push({ key, value });
     } else if (['ref', 'referral', 'affiliate_id', 'afid', 'click_id', 'clickid', 'subid', 'sub_id', 'partner_id', 'sr_share'].includes(paramLower)) {
       categories.affiliate.push({ key, value });
