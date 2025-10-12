@@ -37,12 +37,8 @@ jobs:
     - name: Build extension for Chrome
       run: pnpm build
 
-    - name: Extract Chrome extension for testing
-      run: |
-        unzip .output/clean-url-*-chrome.zip -d .output/chrome-extension
-
     - name: Run E2E tests on Chrome
-      run: EXTENSION_PATH=.output/chrome-extension pnpm test:e2e
+      run: EXTENSION_PATH=.output/chrome-mv3 pnpm test:e2e
 
   e2e-firefox:
     runs-on: ubuntu-latest
@@ -70,12 +66,8 @@ jobs:
     - name: Build extension for Firefox
       run: pnpm build:firefox
 
-    - name: Extract Firefox extension for testing
-      run: |
-        unzip .output/clean-url-*-firefox.zip -d .output/firefox-extension
-
     - name: Run E2E tests on Firefox
-      run: EXTENSION_PATH=.output/firefox-extension pnpm test:e2e
+      run: EXTENSION_PATH=.output/firefox-mv3 pnpm test:e2e
 
   extension-validation:
     runs-on: ubuntu-latest
@@ -118,9 +110,9 @@ jobs:
     - name: Validate manifest for ${{ matrix.browser }}
       run: |
         if [ "${{ matrix.browser }}" = "firefox" ]; then
-          manifest=".output/firefox-extension/manifest.json"
+          manifest=".output/firefox-mv3/manifest.json"
         else
-          manifest=".output/chrome-extension/manifest.json"
+          manifest=".output/chrome-mv3/manifest.json"
         fi
 
         echo "Looking for manifest at: $manifest"
@@ -144,9 +136,9 @@ jobs:
     - name: Check extension size
       run: |
         if [ "${{ matrix.browser }}" = "firefox" ]; then
-          ext_dir=".output/firefox-extension"
+          ext_dir=".output/firefox-mv3"
         else
-          ext_dir=".output/chrome-extension"
+          ext_dir=".output/chrome-mv3"
         fi
 
         size=$(du -sb "$ext_dir" | cut -f1)

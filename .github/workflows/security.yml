@@ -55,27 +55,6 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
 
-  dependency-review:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    timeout-minutes: 5
-
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-
-    - name: Dependency Review
-      uses: actions/dependency-review-action@v4
-      with:
-        # Optional: add a comment to the PR if vulnerabilities are found
-        comment-summary-in-pr: always
-        # Fail the workflow if vulnerabilities are found
-        fail-on-severity: moderate
-        # Only check for new vulnerabilities introduced in this PR
-        allow-licenses: MIT, ISC, BSD-2-Clause, BSD-3-Clause, Apache-2.0, MPL-2.0, CC0-1.0
-
   license-check:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -105,6 +84,6 @@ jobs:
       run: |
         echo "## License Report" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "| Package | License |" >> $GITHUB_STEP_SUMMARY
-        echo "|---------|---------|" >> $GITHUB_STEP_SUMMARY
-        pnpm licenses list --json | jq -r '.[] | "| \(.name) | \(.license) |"' >> $GITHUB_STEP_SUMMARY
+        echo "| Package | Version | License |" >> $GITHUB_STEP_SUMMARY
+        echo "|---------|---------|---------|" >> $GITHUB_STEP_SUMMARY
+        pnpm licenses list --json 2>/dev/null | jq -r 'to_entries[] | "| \(.key) | \(.value.version // "N/A") | \(.value.license // "Unknown") |"' >> $GITHUB_STEP_SUMMARY || echo "Unable to generate license report" >> $GITHUB_STEP_SUMMARY

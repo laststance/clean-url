@@ -68,7 +68,7 @@ jobs:
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
     - name: Build extension for ${{ matrix.browser }}
-      run: pnpm build:${{ matrix.browser == 'chrome' && 'build' || 'build:firefox' }}
+      run: pnpm ${{ matrix.browser == 'chrome' && 'build' || 'build:firefox' }}
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
