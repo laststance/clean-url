@@ -22,7 +22,11 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20'
-        cache: 'pnpm'
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: latest
 
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
@@ -36,10 +40,12 @@ jobs:
     - name: Build extension for Chrome
       run: pnpm build
 
+    - name: Extract Chrome extension for testing
+      run: |
+        unzip .output/clean-url-*-chrome.zip -d .output/chrome-extension
+
     - name: Run E2E tests on Chrome
-      run: pnpm test:e2e
-      env:
-        EXTENSION_PATH: .output/chrome-mv3
+      run: EXTENSION_PATH=.output/chrome-extension pnpm test:e2e
 
   e2e-firefox:
     runs-on: ubuntu-latest
@@ -53,7 +59,11 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20'
-        cache: 'pnpm'
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: latest
 
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
@@ -67,10 +77,12 @@ jobs:
     - name: Build extension for Firefox
       run: pnpm build:firefox
 
+    - name: Extract Firefox extension for testing
+      run: |
+        unzip .output/clean-url-*-firefox.zip -d .output/firefox-extension
+
     - name: Run E2E tests on Firefox
-      run: pnpm test:e2e
-      env:
-        EXTENSION_PATH: .output/firefox-mv2
+      run: EXTENSION_PATH=.output/firefox-extension pnpm test:e2e
 
   extension-validation:
     runs-on: ubuntu-latest
@@ -88,7 +100,11 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20'
-        cache: 'pnpm'
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: latest
 
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
@@ -104,23 +120,32 @@ jobs:
           pnpm build
         fi
 
+    - name: Install jq
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y jq
+
     - name: Validate manifest for ${{ matrix.browser }}
       run: |
         if [ "${{ matrix.browser }}" = "firefox" ]; then
-          manifest=".output/firefox-mv2/manifest.json"
+          manifest=".output/firefox-extension/manifest.json"
         else
-          manifest=".output/chrome-mv3/manifest.json"
+          manifest=".output/chrome-extension/manifest.json"
         fi
+
+        echo "Looking for manifest at: $manifest"
 
         # Check if manifest exists
         if [ ! -f "$manifest" ]; then
           echo "❌ Manifest not found at $manifest"
+          ls -la .output/
           exit 1
         fi
 
         # Validate JSON syntax
         if ! jq empty "$manifest" 2>/dev/null; then
           echo "❌ Invalid JSON in manifest"
+          cat "$manifest"
           exit 1
         fi
 
@@ -129,9 +154,9 @@ jobs:
     - name: Check extension size
       run: |
         if [ "${{ matrix.browser }}" = "firefox" ]; then
-          ext_dir=".output/firefox-mv2"
+          ext_dir=".output/firefox-extension"
         else
-          ext_dir=".output/chrome-mv3"
+          ext_dir=".output/chrome-extension"
         fi
 
         size=$(du -sb "$ext_dir" | cut -f1)

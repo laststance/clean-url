@@ -64,8 +64,8 @@ export default defineConfig({
         // Chrome extension specific configuration
         launchOptions: {
           args: [
-            '--load-extension=.', // Load current directory as extension
-            '--disable-extensions-except=.',
+            `--load-extension=${process.env.EXTENSION_PATH || '.'}`, // Load extension from environment variable or current directory
+            `--disable-extensions-except=${process.env.EXTENSION_PATH || '.'}`,
             '--disable-web-security',
             '--allow-running-insecure-content'
           ]
