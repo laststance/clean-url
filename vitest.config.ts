@@ -17,7 +17,8 @@ export default defineConfig({
         '.output/',
         '**/*.config.*',
         '**/dist/**',
-        'entrypoints/**' // Exclude UI and service worker code (tested via E2E)
+        'entrypoints/**', // Exclude UI and service worker code (tested via E2E)
+        '.eslintrc.cjs' // Exclude ESLint config from coverage
       ],
       thresholds: {
         lines: 80,
