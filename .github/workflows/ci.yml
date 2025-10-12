@@ -27,10 +27,6 @@ jobs:
 
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
-
-    - name: Prepare WXT environment
-      run: pnpm prepare
-
     - name: Run linter
       run: pnpm lint
 
@@ -71,10 +67,6 @@ jobs:
 
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
-
-    - name: Prepare WXT environment
-      run: pnpm prepare
-
     - name: Build extension for ${{ matrix.browser }}
       run: pnpm build:${{ matrix.browser == 'chrome' && 'build' || 'build:firefox' }}
 
@@ -110,10 +102,6 @@ jobs:
 
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
-
-    - name: Prepare WXT environment
-      run: pnpm prepare
-
     - name: Create ZIP package for ${{ matrix.browser }}
       run: pnpm zip${{ matrix.browser == 'firefox' && ':firefox' || '' }}
 

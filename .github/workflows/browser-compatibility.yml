@@ -34,9 +34,6 @@ jobs:
     - name: Install Playwright browsers
       run: pnpm install:playwright
 
-    - name: Prepare WXT environment
-      run: pnpm prepare
-
     - name: Build extension for Chrome
       run: pnpm build
 
@@ -70,10 +67,6 @@ jobs:
 
     - name: Install Playwright browsers
       run: pnpm install:playwright
-
-    - name: Prepare WXT environment
-      run: pnpm prepare
-
     - name: Build extension for Firefox
       run: pnpm build:firefox
 
@@ -108,9 +101,6 @@ jobs:
 
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
-
-    - name: Prepare WXT environment
-      run: pnpm prepare
 
     - name: Build extension for ${{ matrix.browser }}
       run: |

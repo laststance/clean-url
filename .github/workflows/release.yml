@@ -32,10 +32,6 @@ jobs:
 
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
-
-    - name: Prepare WXT environment
-      run: pnpm prepare
-
     - name: Build for Chrome
       run: pnpm build
 
@@ -83,10 +79,6 @@ jobs:
 
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
-
-    - name: Prepare WXT environment
-      run: pnpm prepare
-
     - name: Setup Chrome Web Store credentials
       run: |
         echo "CHROME_CLIENT_ID=${{ secrets.CHROME_CLIENT_ID }}" >> .env.submit
@@ -131,10 +123,6 @@ jobs:
 
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
-
-    - name: Prepare WXT environment
-      run: pnpm prepare
-
     - name: Setup Firefox Add-ons credentials
       run: |
         echo "FIREFOX_JWT_ISSUER=${{ secrets.FIREFOX_JWT_ISSUER }}" >> .env.submit
@@ -178,10 +166,6 @@ jobs:
 
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
-
-    - name: Prepare WXT environment
-      run: pnpm prepare
-
     - name: Setup Edge Addons credentials
       run: |
         echo "EDGE_CLIENT_ID=${{ secrets.EDGE_CLIENT_ID }}" >> .env.submit

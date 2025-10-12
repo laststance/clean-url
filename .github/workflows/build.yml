@@ -32,13 +32,12 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20'
-        cache: 'pnpm'
-
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: latest
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
-
-    - name: Prepare WXT environment
-      run: pnpm prepare
 
     - name: Build extension for ${{ matrix.browser }}
       run: |
@@ -76,10 +75,6 @@ jobs:
 
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
-
-    - name: Prepare WXT environment
-      run: pnpm prepare
-
     - name: Create ZIP package for ${{ matrix.browser }}
       run: |
         if [ "${{ matrix.browser }}" = "firefox" ]; then
