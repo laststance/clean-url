@@ -3,12 +3,14 @@
  * Handles user interactions and URL cleaning functionality
  */
 
+import { analyzeUrl, type AnalyzeUrlResult } from '../../utils/clean-url-logic';
+
 class CleanUrlPopup {
+  currentTab: chrome.tabs.Tab | null = null;
+  cleaningResult: AnalyzeUrlResult | null = null;
+  elements: Record<string, HTMLElement> = {};
+
   constructor() {
-    this.currentTab = null;
-    this.cleaningResult = null;
-    this.elements = {};
-    
     this.init();
   }
 
@@ -20,26 +22,26 @@ class CleanUrlPopup {
 
   cacheElements() {
     this.elements = {
-      loadingState: document.getElementById('loading-state'),
-      mainContent: document.getElementById('main-content'),
-      originalUrl: document.getElementById('original-url'),
-      copyOriginal: document.getElementById('copy-original'),
-      resultsSection: document.getElementById('results-section'),
-      successState: document.getElementById('success-state'),
-      noChangesState: document.getElementById('no-changes-state'),
-      errorState: document.getElementById('error-state'),
-      removedCount: document.getElementById('removed-count'),
-      cleanedUrl: document.getElementById('cleaned-url'),
-      copyCleaned: document.getElementById('copy-cleaned'),
-      applyCleanUrl: document.getElementById('apply-clean-url'),
-      removedParamsDetails: document.getElementById('removed-params-details'),
-      removedParamsList: document.getElementById('removed-params-list'),
-      errorMessage: document.getElementById('error-message'),
-      statsSection: document.getElementById('stats-section'),
-      statsGrid: document.getElementById('stats-grid'),
-      toastContainer: document.getElementById('toast-container'),
-      privacyLink: document.getElementById('privacy-link'),
-      helpLink: document.getElementById('help-link')
+      loadingState: document.getElementById('loading-state')!,
+      mainContent: document.getElementById('main-content')!,
+      originalUrl: document.getElementById('original-url')!,
+      copyOriginal: document.getElementById('copy-original')!,
+      resultsSection: document.getElementById('results-section')!,
+      successState: document.getElementById('success-state')!,
+      noChangesState: document.getElementById('no-changes-state')!,
+      errorState: document.getElementById('error-state')!,
+      removedCount: document.getElementById('removed-count')!,
+      cleanedUrl: document.getElementById('cleaned-url')!,
+      copyCleaned: document.getElementById('copy-cleaned')!,
+      applyCleanUrl: document.getElementById('apply-clean-url')!,
+      removedParamsDetails: document.getElementById('removed-params-details')!,
+      removedParamsList: document.getElementById('removed-params-list')!,
+      errorMessage: document.getElementById('error-message')!,
+      statsSection: document.getElementById('stats-section')!,
+      statsGrid: document.getElementById('stats-grid')!,
+      toastContainer: document.getElementById('toast-container')!,
+      privacyLink: document.getElementById('privacy-link')!,
+      helpLink: document.getElementById('help-link')!
     };
   }
 
@@ -89,14 +91,14 @@ class CleanUrlPopup {
     }
   }
 
-  analyzeUrl(url) {
+  analyzeUrl(url: string) {
     try {
-      // Use the URL cleaning logic
-      this.cleaningResult = window.CleanUrlLogic.analyzeUrl(url);
-      
+      // Use the URL cleaning logic (now using standard ES module import)
+      this.cleaningResult = analyzeUrl(url);
+
       this.hideLoading();
       this.displayResults();
-      
+
     } catch (error) {
       console.error('Error analyzing URL:', error);
       this.showError('Failed to analyze URL');
@@ -105,10 +107,15 @@ class CleanUrlPopup {
 
   displayResults() {
     // Show original URL
-    this.elements.originalUrl.textContent = this.truncateUrl(this.currentTab.url);
-    
+    this.elements.originalUrl.textContent = this.truncateUrl(this.currentTab!.url);
+
+    if (!this.cleaningResult) {
+      this.showError('Failed to analyze URL');
+      return;
+    }
+
     if (!this.cleaningResult.success) {
-      this.showError(this.cleaningResult.error);
+      this.showError(this.cleaningResult.error ?? 'Unknown error occurred');
       return;
     }
 
@@ -121,9 +128,14 @@ class CleanUrlPopup {
 
   showSuccessState() {
     const result = this.cleaningResult;
-    
+
+    if (!result) {
+      this.showError('Failed to analyze URL');
+      return;
+    }
+
     // Update removed count
-    const countText = result.removedCount === 1 
+    const countText = result.removedCount === 1
       ? '1 tracking parameter removed'
       : `${result.removedCount} tracking parameters removed`;
     this.elements.removedCount.textContent = countText;
@@ -151,7 +163,7 @@ class CleanUrlPopup {
     this.elements.errorState.style.display = 'none';
   }
 
-  showError(message) {
+  showError(message: string) {
     this.hideLoading();
     this.elements.errorMessage.textContent = message;
     this.elements.successState.style.display = 'none';
@@ -159,7 +171,7 @@ class CleanUrlPopup {
     this.elements.errorState.style.display = 'block';
   }
 
-  populateRemovedParams(removedParams) {
+  populateRemovedParams(removedParams: Array<{ key: string; value: string }>) {
     if (!removedParams || removedParams.length === 0) {
       this.elements.removedParamsDetails.style.display = 'none';
       return;
@@ -176,7 +188,7 @@ class CleanUrlPopup {
     this.elements.removedParamsDetails.style.display = 'block';
   }
 
-  showStatistics(summary) {
+  showStatistics(summary: { utm: number; social: number; ads: number; affiliate: number; email: number; analytics: number }) {
     const stats = [
       { label: 'UTM', count: summary.utm },
       { label: 'Social', count: summary.social },
@@ -206,6 +218,11 @@ class CleanUrlPopup {
       return;
     }
 
+    if (!this.currentTab?.id) {
+      this.showToast('Unable to access current tab', 'error');
+      return;
+    }
+
     try {
       // Navigate to the cleaned URL
       await chrome.tabs.update(this.currentTab.id, {
@@ -225,7 +242,7 @@ class CleanUrlPopup {
     }
   }
 
-  async copyToClipboard(text, successMessage = 'Copied to clipboard!') {
+  async copyToClipboard(text: string, successMessage: string = 'Copied to clipboard!') {
     try {
       await navigator.clipboard.writeText(text);
       this.showToast(successMessage, 'success');
@@ -249,7 +266,7 @@ class CleanUrlPopup {
     }
   }
 
-  showToast(message, type = 'info') {
+  showToast(message: string, type: 'info' | 'success' | 'error' = 'info') {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     toast.textContent = message;
@@ -269,7 +286,7 @@ class CleanUrlPopup {
     this.elements.mainContent.style.display = 'block';
   }
 
-  truncateUrl(url, maxLength = 50) {
+  truncateUrl(url: string | null | undefined, maxLength: number = 50): string {
     if (!url) return '';
     if (url.length <= maxLength) return url;
     
@@ -278,13 +295,13 @@ class CleanUrlPopup {
     return `${start}...${end}`;
   }
 
-  truncateText(text, maxLength = 30) {
+  truncateText(text: string, maxLength: number = 30): string {
     if (!text) return '';
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
   }
 
-  escapeHtml(text) {
+  escapeHtml(text: string): string {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;

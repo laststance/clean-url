@@ -1,168 +1,56 @@
 ---
-globs: clean-url-logic.js
-description: URL Cleaning Logic Implementation Standards and Tracking Parameters
+globs: utils/*.ts,tests/**/*.ts
+description: URL cleaning logic patterns and implementation guidelines
 ---
 
-# URL Cleaning Logic Implementation Standards
+# URL Cleaning Logic
 
-## Core Functions in [clean-url-logic.js](mdc:clean-url-logic.js)
+## Core Functionality
 
-### Primary Functions
-- **`cleanUrl(url)`** - Main URL cleaning function, returns structured result
-- **`analyzeUrl(url)`** - Analyze URL for tracking parameters by category
-- **`isValidUrl(url)`** - Validate URL format and protocol
-- **`cleanUrls(urls)`** - Batch processing for multiple URLs
+The `clean-url-logic.ts` module provides comprehensive URL cleaning with:
 
-### Function Return Structure
-```javascript
-{
-  success: boolean,           // Operation success/failure
-  cleanedUrl: string | null,  // Cleaned URL or null if failed
-  removedCount: number,       // Number of parameters removed
-  hasChanges: boolean,        // Whether URL was modified
-  removedParams: string[],    // Array of removed parameter names
-  savedBytes: number,         // Optional: bytes saved by cleaning
-  error: string | null        // Error message if failed
-}
-```
+- **25+ tracking parameter types** removed (UTM, social media, ads, affiliate, email trackers)
+- **Essential parameter preservation** (functionality-critical parameters kept)
+- **Malformed hash fragment handling** (tracking-like data in URL fragments)
+- **Detailed result reporting** with categorized removed parameters and byte savings
 
-## Tracking Parameters to Remove
+## Key Functions
 
-### UTM Parameters (Google Analytics)
-- `utm_source` - Traffic source (google, facebook, newsletter)
-- `utm_medium` - Marketing medium (cpc, email, social)
-- `utm_campaign` - Campaign name
-- `utm_term` - Paid search keywords
-- `utm_content` - Content differentiation
-- `utm_nooverride` - AdWords auto-tagging override
+### `cleanUrl(url: string): CleanUrlResult`
+Main cleaning function that:
+- Validates input URL
+- Removes tracking parameters from query strings
+- Cleans hash fragments containing tracking data
+- Returns structured result with original/cleaned URLs and metadata
 
-### Social Media Trackers
-- `fbclid` - Facebook Click ID
-- `igshid` - Instagram Share ID
-- `ttclid` - TikTok Click ID
-- `tiktok_r` - TikTok Referral parameter
-- `li_fat_id` - LinkedIn Fat ID
-- `mkt_tok` - LinkedIn/Marketo token
-- `trk` - General tracking parameter
+### `analyzeUrl(url: string): AnalyzeUrlResult`
+Analysis function that:
+- Categorizes parameters by type (tracking, essential, unknown)
+- Provides detailed breakdown without actually cleaning
+- Useful for understanding what would be removed
 
-### Ad Platform Trackers
-- `gclid` - Google Click ID (AdWords)
-- `yclid` - Yandex Click ID
-- `dclid` - DoubleClick Click ID
-- `msclkid` - Microsoft Click ID (Bing Ads)
+## Parameter Categories
 
-### Email Marketing Trackers
-- `ck_subscriber_id` - ConvertKit subscriber ID
-- `mc_cid` - MailChimp campaign ID
-- `mc_eid` - MailChimp email ID
+### Tracking Parameters (Removed)
+- **UTM Parameters**: `utm_source`, `utm_medium`, `utm_campaign`, etc.
+- **Social Media**: `fbclid`, `gclid`, `msclkid`, `twclid`
+- **Email Trackers**: `utm_term`, `mc_eid`, `trk_contact`, `trk_msg`
+- **Analytics**: `ga_source`, `ga_medium`, `_ga`, `_gid`
+- **Affiliate**: `ref`, `referrer`, `affiliate_id`
 
-### Affiliate & Referral Trackers
-- `ref`, `referral` - General referral parameters
-- `affiliate_id`, `afid` - Affiliate identification
-- `click_id`, `clickid` - Click tracking
-- `subid`, `sub_id` - Sub-affiliate ID
-- `partner_id` - Partner identification
-- `sr_share` - ShareThis share parameter
+### Essential Parameters (Preserved)
+- **Functionality**: `q` (search), `page`, `sort`, `filter`
+- **Authentication**: `token`, `auth`, `session_id`
+- **Configuration**: `lang`, `theme`, `view`
 
-### Analytics & Other Trackers
-- `sthash` - ShareThis hash
-- `source` - Generic source parameter
-- `campaign` - Generic campaign parameter
-- `adgroup` - Ad group parameter
-- `adposition` - Ad position parameter
+## Error Handling
 
-## Implementation Requirements
+- **Input validation** for malformed URLs
+- **Structured error objects** with error types and messages
+- **Graceful degradation** - returns original URL on errors
 
-### URL Processing Logic
-- **Case Insensitive**: Use `.toLowerCase()` for parameter matching
-- **Preserve Structure**: Maintain protocol, domain, path, and fragments
-- **Query Parameter Handling**: Remove only tracking parameters, preserve functional ones
-- **Fragment Preservation**: Keep URL fragments (#section) intact
-- **Encoding Handling**: Properly handle URL encoding/decoding
+## Test Coverage
 
-### Parameter Matching Strategy
-```javascript
-// Example implementation pattern
-const TRACKING_PARAM_PATTERNS = [
-  // UTM parameters
-  'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'utm_nooverride',
-  
-  // Social media trackers
-  'fbclid', 'igshid', 'ttclid', 'tiktok_r', 'li_fat_id', 'mkt_tok', 'trk',
-  
-  // Ad platform trackers
-  'gclid', 'yclid', 'dclid', 'msclkid',
-  
-  // Email marketing
-  'ck_subscriber_id', 'mc_cid', 'mc_eid',
-  
-  // Affiliate trackers
-  'ref', 'referral', 'affiliate_id', 'afid', 'click_id', 'clickid', 'subid', 'sub_id', 'partner_id', 'sr_share',
-  
-  // Analytics
-  'sthash', 'source', 'campaign', 'adgroup', 'adposition'
-];
-```
-
-### Error Handling Requirements
-- **Input Validation**: Check for null, undefined, empty strings, non-strings
-- **URL Validation**: Use try-catch with `new URL()` constructor
-- **Graceful Degradation**: Never throw exceptions, always return structured result
-- **Meaningful Errors**: Provide clear error messages for debugging
-
-### Performance Considerations
-- **Efficient Processing**: Complete URL cleaning in <100ms
-- **Memory Usage**: Minimize memory allocation for large URLs
-- **Regex Optimization**: Use efficient patterns for parameter matching
-- **Early Returns**: Return immediately for invalid URLs or no parameters
-
-## Testing Integration
-
-### Test Coverage Requirements
-- **All Tracking Parameters**: Test removal of each parameter type
-- **Parameter Combinations**: Test mixed tracking and legitimate parameters
-- **Edge Cases**: Empty values, malformed URLs, very long URLs
-- **Case Sensitivity**: Test uppercase, lowercase, and mixed case parameters
-- **URL Variants**: Test with/without protocols, fragments, ports
-
-### Real-world Test Cases
-Use test data from [tests/test-urls.json](mdc:tests/test-urls.json):
-- ConvertKit newsletter URLs
-- GitHub URLs with tracking
-- Social media shared URLs
-- E-commerce URLs with affiliate tracking
-- Complex URLs with fragments and multiple parameters
-
-## Browser Compatibility
-
-### URL API Usage
-- Use `new URL()` constructor for parsing (supported in all modern browsers)
-- Handle URL constructor exceptions gracefully
-- Support international domain names (IDN)
-- Maintain URL encoding consistency
-
-### Module Export Pattern
-```javascript
-// Support both browser and Node.js environments
-if (typeof module !== 'undefined' && module.exports) {
-  // Node.js environment (for testing)
-  module.exports = { cleanUrl, analyzeUrl, isValidUrl, cleanUrls };
-} else {
-  // Browser environment
-  window.CleanUrlLogic = { cleanUrl, analyzeUrl, isValidUrl, cleanUrls };
-}
-```
-
-## Security Considerations
-
-### Input Sanitization
-- **URL Validation**: Validate all URLs before processing
-- **Parameter Extraction**: Safely extract parameters without code execution
-- **XSS Prevention**: Don't execute or eval any URL content
-- **Size Limits**: Handle very large URLs without memory issues
-
-### Privacy Protection
-- **Local Processing**: All URL cleaning happens locally
-- **No Data Collection**: Never send URLs to external servers
-- **No Storage**: Don't store user URLs unless explicitly needed
-- **No Logging**: Avoid logging sensitive URL information
+- **93.78% coverage** on core logic
+- **Real-world examples** from ConvertKit, GitHub, etc.
+- **Edge cases**: Malformed URLs, empty parameters, encoding issues

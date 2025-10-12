@@ -1,42 +1,52 @@
 ---
 alwaysApply: true
-description: Clean URL Chrome Extension Project Structure
+description: Project architecture and file structure guidelines for the Clean URL Chrome extension
 ---
 
-# Clean URL Chrome Extension Project Structure
+# Project Structure
 
-This is a Chrome extension that removes tracking parameters from URLs when users click the extension icon. The project follows Manifest V3 architecture with comprehensive testing.
+## WXT Framework Architecture
 
-## Core Architecture
+This Chrome extension is built with **WXT** (Web Extension Toolkit), a next-generation framework that provides:
 
-### Extension Files
-- **[manifest.json](mdc:manifest.json)** - Manifest V3 configuration, permissions, and metadata
-- **[popup.html](mdc:popup.html)** - Extension popup interface
-- **[popup.js](mdc:popup.js)** - Popup logic and user interaction handling
-- **[popup.css](mdc:popup.css)** - Popup styling and UI components
-- **[background.js](mdc:background.js)** - Service worker for badge updates and background tasks
+- File-based entrypoint system
+- Auto-generated manifest from configuration
+- Hot Module Replacement (HMR) during development
+- Built-in TypeScript support
+- Multi-browser support (Chrome, Firefox, Safari)
+
+## Core Module Structure
+
+### Entrypoints
+- **`entrypoints/popup/`** - Extension popup interface
+  - `index.html` - Popup HTML structure
+  - `main.ts` - Popup logic and UI interactions
+  - `style.css` - Popup styling
+- **`entrypoints/background.ts`** - Service worker for badge updates and context menus
 
 ### Core Logic
-- **[clean-url-logic.js](mdc:clean-url-logic.js)** - Main URL cleaning algorithm and tracking parameter removal
-- **[icons/](mdc:icons/)** - Extension icons (16px, 32px, 48px, 128px) for different UI contexts
+- **`utils/clean-url-logic.ts`** - Main URL cleaning engine with comprehensive tracking parameter patterns
+- **`wxt.config.ts`** - WXT configuration with manifest settings
 
-### Testing Infrastructure
-- **[tests/unit/](mdc:tests/unit/)** - Jest unit tests for URL cleaning logic
-- **[tests/e2e/](mdc:tests/e2e/)** - Playwright E2E tests for extension functionality
-- **[tests/test-urls.json](mdc:tests/test-urls.json)** - Comprehensive test fixtures with real-world URLs
-- **[jest.config.cjs](mdc:jest.config.cjs)** - Jest configuration for unit testing
-- **[playwright.config.js](mdc:playwright.config.js)** - Playwright configuration for E2E testing
+### Assets & Resources
+- **`public/`** - Static assets (icons, privacy policy)
+- **`icons/`** - Extension icon files in various sizes
 
-## Workflow
-1. User clicks extension icon
-2. [popup.js](mdc:popup.js) loads and calls [clean-url-logic.js](mdc:clean-url-logic.js)
-3. Current tab URL is cleaned of tracking parameters
-4. User sees cleaned URL in popup with removal count
-5. Optional: Navigate to cleaned URL via chrome.tabs.update()
+### Testing
+- **`tests/unit/`** - Unit tests using Vitest with jsdom
+- **`tests/e2e/`** - End-to-end tests using Playwright
+- **`tests/test-urls.json`** - Real-world URL test fixtures
 
-## Key Features
-- **Manual activation only** - No automatic URL cleaning
-- **Comprehensive tracking removal** - UTM, social media, email, affiliate trackers
-- **Preserve legitimate parameters** - Only remove known tracking patterns
-- **Visual feedback** - Show removal count and cleaned URL
-- **Robust testing** - Unit tests + E2E tests with real-world scenarios
+## Build Output
+
+After `pnpm build`, the extension builds to `.output/chrome-mv3/`:
+- `manifest.json` - Auto-generated manifest
+- `background.js` - Bundled service worker
+- `popup.html/js/css` - Popup interface files
+- Icon files and static assets
+
+## Module System
+
+- **ES Modules** - Standard `export`/`import` syntax throughout
+- **TypeScript** - Full type safety with interfaces for all data structures
+- **Relative imports** - No path aliases, using relative paths for better compatibility

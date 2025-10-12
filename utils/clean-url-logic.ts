@@ -68,7 +68,7 @@ const TRACKING_PARAM_PATTERNS = [
  * @param {string} urlString - The URL string to validate
  * @returns {boolean} True if valid URL, false otherwise
  */
-function isValidUrl(urlString) {
+function isValidUrl(urlString: string): boolean {
   try {
     new URL(urlString);
     return true;
@@ -82,7 +82,7 @@ function isValidUrl(urlString) {
  * @param {string} originalUrl - The original URL string
  * @returns {Object} Result object with cleaned URL and metadata
  */
-function cleanUrl(originalUrl) {
+function cleanUrl(originalUrl: string): CleanUrlResult {
   // Input validation
   if (!originalUrl || typeof originalUrl !== 'string') {
     return {
@@ -171,7 +171,7 @@ function cleanUrl(originalUrl) {
   } catch (error) {
     return {
       success: false,
-      error: `URL processing error: ${error.message}`,
+      error: `URL processing error: ${error instanceof Error ? error.message : String(error)}`,
       originalUrl: originalUrl,
       cleanedUrl: null,
       removedParams: [],
@@ -185,7 +185,7 @@ function cleanUrl(originalUrl) {
  * @param {string[]} urls - Array of URL strings to clean
  * @returns {Object[]} Array of cleaning results
  */
-function cleanUrls(urls) {
+function cleanUrls(urls: string[]): CleanUrlResult[] {
   if (!Array.isArray(urls)) {
     throw new Error('Input must be an array of URLs');
   }
@@ -196,17 +196,43 @@ function cleanUrls(urls) {
 /**
  * Get statistics about tracking parameters in a URL
  * @param {string} url - The URL to analyze
- * @returns {Object} Analysis results
+ * @returns {AnalyzeUrlResult} Analysis results
  */
-function analyzeUrl(url) {
+function analyzeUrl(url: string): AnalyzeUrlResult {
   const result = cleanUrl(url);
-  
+
   if (!result.success) {
-    return result;
+    // Return error result with empty categories and summary
+    return {
+      ...result,
+      categories: {
+        utm: [],
+        social: [],
+        ads: [],
+        affiliate: [],
+        email: [],
+        analytics: []
+      },
+      summary: {
+        utm: 0,
+        social: 0,
+        ads: 0,
+        affiliate: 0,
+        email: 0,
+        analytics: 0
+      }
+    };
   }
 
   // Categorize removed parameters
-  const categories = {
+  const categories: {
+    utm: Array<{ key: string; value: string }>;
+    social: Array<{ key: string; value: string }>;
+    ads: Array<{ key: string; value: string }>;
+    affiliate: Array<{ key: string; value: string }>;
+    email: Array<{ key: string; value: string }>;
+    analytics: Array<{ key: string; value: string }>;
+  } = {
     utm: [],
     social: [],
     ads: [],
@@ -247,33 +273,47 @@ function analyzeUrl(url) {
   };
 }
 
-// Export functions for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-  // Node.js environment (for testing)
-  module.exports = {
-    cleanUrl,
-    cleanUrls,
-    analyzeUrl,
-    isValidUrl,
-    TRACKING_PARAM_PATTERNS
+// TypeScript type definitions
+export interface RemovedParam {
+  key: string;
+  value: string;
+}
+
+export interface CleanUrlResult {
+  success: boolean;
+  error: string | null;
+  originalUrl: string;
+  cleanedUrl: string | null;
+  removedParams: RemovedParam[];
+  removedCount: number;
+  hasChanges?: boolean;
+  savedBytes?: number;
+}
+
+export interface AnalyzeUrlResult extends CleanUrlResult {
+  categories: {
+    utm: RemovedParam[];
+    social: RemovedParam[];
+    ads: RemovedParam[];
+    affiliate: RemovedParam[];
+    email: RemovedParam[];
+    analytics: RemovedParam[];
   };
-} else if (typeof window !== 'undefined') {
-  // Browser environment (Chrome extension popup/content scripts)
-  window.CleanUrlLogic = {
-    cleanUrl,
-    cleanUrls,
-    analyzeUrl,
-    isValidUrl,
-    TRACKING_PARAM_PATTERNS
-  };
-} else {
-  // Service worker environment (background script)
-  // Make functions available globally in service worker scope
-  globalThis.CleanUrlLogic = {
-    cleanUrl,
-    cleanUrls,
-    analyzeUrl,
-    isValidUrl,
-    TRACKING_PARAM_PATTERNS
+  summary: {
+    utm: number;
+    social: number;
+    ads: number;
+    affiliate: number;
+    email: number;
+    analytics: number;
   };
 }
+
+// Export functions as standard ES modules
+export {
+  cleanUrl,
+  cleanUrls,
+  analyzeUrl,
+  isValidUrl,
+  TRACKING_PARAM_PATTERNS
+};

@@ -1,128 +1,77 @@
 ---
-globs: *.test.js,*.spec.js,tests/**/*.js
-description: Testing Patterns and Standards for Clean URL Extension
+globs: tests/**/*.ts,*.test.ts,vitest.config.ts,playwright.config.ts
+description: Testing architecture and patterns for unit and e2e tests
 ---
 
-# Testing Patterns and Standards
+# Testing Architecture
 
-## Test Organization
+## Unit Testing (Vitest)
+
+### Configuration
+- **Environment**: jsdom for DOM simulation
+- **Pattern**: `tests/unit/**/*.test.ts`
+- **Coverage Target**: 80% (currently 93.78% on core logic)
 
 ### Test Structure
-- **Unit Tests**: `tests/unit/` - Test individual functions in isolation
-- **E2E Tests**: `tests/e2e/` - Test complete user workflows with Playwright
-- **Test Data**: [tests/test-urls.json](mdc:tests/test-urls.json) - Comprehensive real-world URL fixtures
-
-### Test File Naming
-- Unit tests: `*.test.js` (e.g., `clean-url-logic.test.js`)
-- E2E tests: `*.spec.js` (e.g., `clean-url.spec.js`)
-- Test utilities: `fixtures.js`, `setup.js`, `global-*.js`
-
-## Unit Testing Standards (Jest)
-
-### Test Case Structure
-```javascript
-describe('Feature Name', () => {
-  test('should handle specific scenario', () => {
-    // Arrange
-    const input = 'test data';
-    
-    // Act
-    const result = functionUnderTest(input);
-    
-    // Assert
-    expect(result.success).toBe(true);
-    expect(result.cleanedUrl).toBe('expected result');
+```typescript
+describe('cleanUrl', () => {
+  it('removes UTM parameters', () => {
+    const result = cleanUrl('https://example.com?utm_source=test');
+    expect(result.cleanedUrl).toBe('https://example.com');
   });
 });
 ```
 
-### Required Test Coverage
-- **Happy Path**: Valid URLs with tracking parameters
-- **Edge Cases**: Empty strings, null, undefined, malformed URLs
-- **Error Handling**: Invalid input validation and error messages
-- **Performance**: Large URLs and many parameters
-- **Real-world Data**: Use fixtures from [test-urls.json](mdc:tests/test-urls.json)
+### Key Test Files
+- **`clean-url-logic.test.ts`** - Core cleaning function tests
+- **`clean-url-coverage.test.ts`** - Comprehensive parameter coverage
+- **`clean-url-direct.test.ts`** - Direct function call tests
+- **`clean-url-simple.test.ts`** - Basic functionality tests
 
-### Test Data Usage
-- Load test fixtures: `const testUrls = require('../test-urls.json');`
-- Test each fixture: `Object.entries(testUrls).forEach(([name, testCase]) => ...)`
-- Verify expected results: `expect(result.removedCount).toBe(testCase.expectedRemovedCount);`
+## End-to-End Testing (Playwright)
 
-## E2E Testing Standards (Playwright)
+### Configuration
+- **Browser**: Chrome with extension loading (`--load-extension=.output/chrome-mv3`)
+- **Reporter**: List reporter
+- **Artifacts**: Videos/screenshots only on failure
 
-### Extension Testing Setup
-- Use `fixtures.js` for extension loading and initialization
-- Test in clean browser context for each test
-- Handle extension permissions and Chrome APIs
+### Test Files
+- **`clean-url.spec.js`** - Main E2E extension functionality
+- **`service-worker.spec.js`** - Background script testing
+- **`simple-test.spec.js`** - Basic extension loading
 
-### User Workflow Testing
-1. **Extension Load**: Verify extension loads correctly
-2. **Icon Click**: Test popup opening and UI display
-3. **URL Cleaning**: Verify cleaning functionality end-to-end
-4. **Visual Feedback**: Check badge updates and user notifications
-5. **Navigation**: Test URL updates in browser address bar
+### Test Setup
+- **Global Setup**: Extension building and browser preparation
+- **Fixtures**: `fixtures.js` provides test utilities
+- **Web Server**: Starts dev server for testing
 
-### Test Scenarios
-- Basic parameter removal with visual verification
-- Mixed parameters (tracking + legitimate)
-- Edge cases (no parameters, malformed URLs)
-- Performance testing with very long URLs
-- Cross-browser compatibility
+## Test Data
 
-## Test Data Management
+### URL Fixtures
+- **`tests/test-urls.json`** - Real-world URL examples
+- Categories: UTM, social media, email, affiliate, analytics
+- Includes expected cleaned results for validation
 
-### Fixture Requirements
-- **Comprehensive Coverage**: UTM, social media, email, affiliate trackers
-- **Real-world URLs**: Actual websites with tracking parameters
-- **Expected Results**: Include `original`, `expected`, `expectedRemovedCount`
-- **Test Descriptions**: Clear description of what each test validates
+## Testing Commands
 
-### Test Data Structure
-```javascript
-{
-  "test_name": {
-    "original": "https://example.com?utm_source=test&param=value",
-    "expected": "https://example.com?param=value",
-    "expectedRemovedCount": 1,
-    "description": "Clear description of test scenario"
-  }
-}
-```
+### Unit Tests
+- `pnpm test:unit` - Run unit tests
+- `pnpm test:watch` - Watch mode
+- `pnpm test:coverage` - Coverage report
+- `pnpm test:ui` - Vitest UI
 
-## Performance Testing
+### E2E Tests
+- `pnpm test:e2e` - Run Playwright tests
+- `pnpm install:playwright` - Install browsers
 
-### Benchmarking
-- URL cleaning should complete in <100ms
-- Test with 100+ parameters
-- Memory usage with very long URLs
-- Batch processing performance
+### Combined
+- `pnpm test` - All tests
+- `pnpm validate` - Lint + tests + typecheck
 
-### Load Testing
-- Test with realistic user interaction patterns
-- Verify no memory leaks in long-running tests
-- Performance regression detection
+## Testing Best Practices
 
-## Error Testing
-
-### Input Validation
-- Test all invalid input types: `null`, `undefined`, `""`, `123`, `{}`
-- Verify structured error responses
-- Ensure no exceptions are thrown
-
-### Chrome Extension API Errors
-- Test permission denied scenarios
-- Handle tab access restrictions
-- Network connectivity issues
-
-## Test Utilities
-
-### Common Test Helpers
-- URL validation utilities
-- Chrome extension mocking
-- Performance measurement helpers
-- Error message validation
-
-### Setup and Teardown
-- Clean browser state between tests
-- Reset extension state
-- Clear test data and temporary files
+- **Real-world examples** over synthetic test data
+- **Parameter preservation** testing (essential params kept)
+- **Error handling** validation
+- **Performance considerations** for large URLs
+- **Extension behavior** verification in browser context
