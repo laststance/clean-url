@@ -1,65 +1,19 @@
 /**
  * Coverage-Enabled Tests for Clean URL Logic
- * Uses proper module imports for Jest coverage instrumentation
+ * Uses proper module imports for Vitest coverage instrumentation
  */
 
-const fs = require('fs');
-const path = require('path');
+import { describe, test, expect } from 'vitest';
+import { cleanUrl, analyzeUrl, cleanUrls, isValidUrl, TRACKING_PARAM_PATTERNS } from '../../utils/clean-url-logic';
 
-// Create a proper module wrapper that Jest can instrument
-const cleanUrlLogicPath = path.join(__dirname, '../../clean-url-logic.js');
-const cleanUrlLogicCode = fs.readFileSync(cleanUrlLogicPath, 'utf8');
+interface TestUrlCase {
+  original: string;
+  expected: string;
+  expectedRemovedCount: number;
+  description: string;
+}
 
-// Create a module that can be instrumented
-const Module = require('module');
-const originalRequire = Module.prototype.require;
-
-// Mock the module exports for coverage
-let CleanUrlLogic;
-
-// Parse and execute the code in a way that Jest can track
-const vm = require('vm');
-const moduleWrapper = {
-  exports: {},
-  require: require,
-  module: { exports: {} },
-  __filename: cleanUrlLogicPath,
-  __dirname: path.dirname(cleanUrlLogicPath)
-};
-
-// Execute in context that Jest can track
-const script = new vm.Script(cleanUrlLogicCode, {
-  filename: cleanUrlLogicPath,
-  lineOffset: 0,
-  displayErrors: true
-});
-
-const context = vm.createContext({
-  module: moduleWrapper.module,
-  exports: moduleWrapper.exports,
-  require: moduleWrapper.require,
-  __filename: moduleWrapper.__filename,
-  __dirname: moduleWrapper.__dirname,
-  console: console,
-  process: process,
-  Buffer: Buffer,
-  setTimeout: setTimeout,
-  setInterval: setInterval,
-  clearTimeout: clearTimeout,
-  clearInterval: clearInterval,
-  URL: URL,
-  URLSearchParams: URLSearchParams,
-  performance: performance,
-  global: global,
-  globalThis: globalThis
-});
-
-script.runInContext(context);
-CleanUrlLogic = moduleWrapper.module.exports;
-
-// Load test fixtures
-const testUrlsPath = path.join(__dirname, '..', 'test-urls.json');
-const testUrls = JSON.parse(fs.readFileSync(testUrlsPath, 'utf8'));
+const testUrls: Record<string, TestUrlCase> = require('../test-urls.json');
 
 describe('Clean URL Logic - Coverage Tests', () => {
 
@@ -67,7 +21,7 @@ describe('Clean URL Logic - Coverage Tests', () => {
     // Generate tests for each URL in test-urls.json
     Object.entries(testUrls).forEach(([testName, testCase]) => {
       test(`${testCase.description}`, () => {
-        const result = CleanUrlLogic.cleanUrl(testCase.original);
+        const result = cleanUrl(testCase.original);
 
         expect(result.success).toBe(true);
         expect(result.cleanedUrl).toBe(testCase.expected);
@@ -86,7 +40,7 @@ describe('Clean URL Logic - Coverage Tests', () => {
   describe('analyzeUrl coverage', () => {
     test('should analyze URL with multiple tracking categories', () => {
       const url = 'https://example.com?utm_source=google&fbclid=123&gclid=456&mc_cid=789&ref=partner';
-      const result = CleanUrlLogic.analyzeUrl(url);
+      const result = analyzeUrl(url);
 
       expect(result.success).toBe(true);
       expect(result.categories).toBeDefined();
@@ -99,7 +53,7 @@ describe('Clean URL Logic - Coverage Tests', () => {
 
     test('should handle analytics category', () => {
       const url = 'https://example.com?sthash=test&source=analytics';
-      const result = CleanUrlLogic.analyzeUrl(url);
+      const result = analyzeUrl(url);
 
       expect(result.summary.analytics).toBe(2);
     });
@@ -108,7 +62,7 @@ describe('Clean URL Logic - Coverage Tests', () => {
   describe('cleanUrls batch processing coverage', () => {
     test('should process multiple URLs', () => {
       const urls = Object.values(testUrls).slice(0, 5).map(t => t.original);
-      const results = CleanUrlLogic.cleanUrls(urls);
+      const results = cleanUrls(urls);
 
       expect(results).toHaveLength(5);
       results.forEach(result => {
@@ -119,13 +73,13 @@ describe('Clean URL Logic - Coverage Tests', () => {
 
   describe('Error handling coverage', () => {
     test('should handle processing errors gracefully', () => {
-      const result = CleanUrlLogic.cleanUrl(null);
+      const result = cleanUrl(null as any);
       expect(result.success).toBe(false);
       expect(result.error).toBeDefined();
     });
 
     test('should handle invalid URL format', () => {
-      const result = CleanUrlLogic.cleanUrl('not-a-url');
+      const result = cleanUrl('not-a-url');
       expect(result.success).toBe(false);
     });
   });
@@ -133,7 +87,7 @@ describe('Clean URL Logic - Coverage Tests', () => {
   describe('Edge cases coverage', () => {
     test('should handle URLs with ports', () => {
       const url = 'https://localhost:8080/path?utm_source=test&param=value';
-      const result = CleanUrlLogic.cleanUrl(url);
+      const result = cleanUrl(url);
 
       expect(result.success).toBe(true);
       expect(result.cleanedUrl).toContain(':8080');
@@ -143,7 +97,7 @@ describe('Clean URL Logic - Coverage Tests', () => {
 
     test('should preserve hash fragments', () => {
       const url = 'https://example.com/page?utm_source=test#section';
-      const result = CleanUrlLogic.cleanUrl(url);
+      const result = cleanUrl(url);
 
       expect(result.success).toBe(true);
       expect(result.cleanedUrl).toContain('#section');
@@ -151,7 +105,7 @@ describe('Clean URL Logic - Coverage Tests', () => {
 
     test('should handle empty query strings', () => {
       const url = 'https://example.com/path?';
-      const result = CleanUrlLogic.cleanUrl(url);
+      const result = cleanUrl(url);
 
       expect(result.success).toBe(true);
     });
@@ -159,34 +113,34 @@ describe('Clean URL Logic - Coverage Tests', () => {
 
   describe('Parameter pattern coverage', () => {
     test('should have complete tracking parameter list', () => {
-      expect(CleanUrlLogic.TRACKING_PARAM_PATTERNS).toBeDefined();
-      expect(CleanUrlLogic.TRACKING_PARAM_PATTERNS.length).toBeGreaterThan(25);
+      expect(TRACKING_PARAM_PATTERNS).toBeDefined();
+      expect(TRACKING_PARAM_PATTERNS.length).toBeGreaterThan(25);
 
       // Verify key parameters are included
-      expect(CleanUrlLogic.TRACKING_PARAM_PATTERNS).toContain('utm_source');
-      expect(CleanUrlLogic.TRACKING_PARAM_PATTERNS).toContain('fbclid');
-      expect(CleanUrlLogic.TRACKING_PARAM_PATTERNS).toContain('gclid');
-      expect(CleanUrlLogic.TRACKING_PARAM_PATTERNS).toContain('ck_subscriber_id');
+      expect(TRACKING_PARAM_PATTERNS).toContain('utm_source');
+      expect(TRACKING_PARAM_PATTERNS).toContain('fbclid');
+      expect(TRACKING_PARAM_PATTERNS).toContain('gclid');
+      expect(TRACKING_PARAM_PATTERNS).toContain('ck_subscriber_id');
     });
   });
 
   describe('isValidUrl coverage', () => {
     test('should validate various URL formats', () => {
-      expect(CleanUrlLogic.isValidUrl('https://example.com')).toBe(true);
-      expect(CleanUrlLogic.isValidUrl('http://example.com')).toBe(true);
-      expect(CleanUrlLogic.isValidUrl('ftp://example.com')).toBe(true);
-      expect(CleanUrlLogic.isValidUrl('//example.com')).toBe(false);
-      expect(CleanUrlLogic.isValidUrl('example.com')).toBe(false);
+      expect(isValidUrl('https://example.com')).toBe(true);
+      expect(isValidUrl('http://example.com')).toBe(true);
+      expect(isValidUrl('ftp://example.com')).toBe(true);
+      expect(isValidUrl('//example.com')).toBe(false);
+      expect(isValidUrl('example.com')).toBe(false);
     });
   });
 
   describe('Saved bytes calculation', () => {
     test('should calculate bytes saved correctly', () => {
       const longTrackingUrl = 'https://example.com?utm_source=verylongsourcevalue&utm_medium=verylongmediumvalue&utm_campaign=verylongcampaignvalue';
-      const result = CleanUrlLogic.cleanUrl(longTrackingUrl);
+      const result = cleanUrl(longTrackingUrl);
 
       expect(result.savedBytes).toBeGreaterThan(50);
-      expect(result.savedBytes).toBe(longTrackingUrl.length - result.cleanedUrl.length);
+      expect(result.savedBytes).toBe(longTrackingUrl.length - (result.cleanedUrl?.length || 0));
     });
   });
 

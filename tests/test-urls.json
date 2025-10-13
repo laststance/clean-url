@@ -43,19 +43,19 @@
   },
   "multiple_social_trackers": {
     "original": "https://news.example.com/article?fbclid=fb123&igshid=ig456&ttclid=tt789&li_fat_id=li012",
-    "expected": "https://news.example.com/article/",
+    "expected": "https://news.example.com/article",
     "expectedRemovedCount": 4,
     "description": "Multiple social media tracking parameters"
   },
   "email_marketing_trackers": {
     "original": "https://newsletter.example.com/campaign?mc_cid=mailchimp123&mc_eid=email456&ck_subscriber_id=convert789",
-    "expected": "https://newsletter.example.com/campaign/",
+    "expected": "https://newsletter.example.com/campaign",
     "expectedRemovedCount": 3,
     "description": "Email marketing tracking parameters"
   },
   "affiliate_trackers": {
     "original": "https://affiliate.example.com/product?ref=partner&affiliate_id=12345&click_id=abc123&subid=xyz789",
-    "expected": "https://affiliate.example.com/product/",
+    "expected": "https://affiliate.example.com/product",
     "expectedRemovedCount": 4,
     "description": "Affiliate and referral tracking parameters"
   },

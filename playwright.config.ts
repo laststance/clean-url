@@ -1,5 +1,6 @@
 /**
  * Playwright Configuration for Clean URL Extension E2E Tests
+ * Updated for WXT framework output directory
  */
 
 import { defineConfig, devices } from '@playwright/test';
@@ -61,11 +62,11 @@ export default defineConfig({
       name: 'chromium-extension',
       use: { 
         ...devices['Desktop Chrome'],
-        // Chrome extension specific configuration
+        // Chrome extension specific configuration - updated for WXT output
         launchOptions: {
           args: [
-            `--load-extension=${process.env.EXTENSION_PATH || '.'}`, // Load extension from environment variable or current directory
-            `--disable-extensions-except=${process.env.EXTENSION_PATH || '.'}`,
+            '--load-extension=.output/chrome-mv3', // WXT output directory for Chrome MV3
+            '--disable-extensions-except=.output/chrome-mv3',
             '--disable-web-security',
             '--allow-running-insecure-content'
           ]

@@ -10,8 +10,8 @@ test.describe('Clean URL Extension E2E Tests', () => {
   
   let extensionFixture;
   
-  test.beforeEach(async ({ context, page }) => {
-    extensionFixture = new ExtensionFixture(context, page);
+  test.beforeEach(async ({ context: _context, page }) => {
+    extensionFixture = new ExtensionFixture(_context, page);
     await extensionFixture.setup();
   });
 
@@ -20,14 +20,14 @@ test.describe('Clean URL Extension E2E Tests', () => {
     await page.goto('https://example.com?utm_source=test&utm_medium=email');
     
     // Check if extension icon is visible (may vary by browser)
-    const extensionIcon = page.locator('[data-testid="extension-action"]');
+    const _extensionIcon = page.locator('[data-testid="extension-action"]');
     
     // The extension should be loaded (we can't directly test icon visibility in headless mode)
     // but we can test the functionality
     expect(true).toBe(true); // Placeholder - actual icon testing needs special setup
   });
 
-  test('popup opens and analyzes URL', async ({ page, context }) => {
+  test('popup opens and analyzes URL', async ({ page, context: _context }) => {
     // Navigate to a page with tracking parameters
     await page.goto('https://example.com?utm_source=google&utm_medium=cpc&fbclid=123');
     
@@ -66,11 +66,11 @@ test.describe('Clean URL Extension E2E Tests', () => {
     expect(cleanedUrl).toContain('product=laptop'); // Should preserve legitimate params
   });
 
-  test('copy to clipboard functionality', async ({ page, context }) => {
+  test('copy to clipboard functionality', async ({ page, context: _context }) => {
     await page.goto('https://example.com?utm_source=test&clean=param');
     
     // Grant clipboard permissions
-    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await _context.grantPermissions(['clipboard-read', 'clipboard-write']);
     
     const extensionPages = await extensionFixture.getExtensionPages();
     
@@ -123,7 +123,7 @@ test.describe('Clean URL Extension E2E Tests', () => {
     expect(trackingCount).toBe(4);
   });
 
-  test('context menu integration', async ({ page, context }) => {
+  test('context menu integration', async ({ page, context: _context }) => {
     await page.goto('https://example.com');
     
     // Create a test link with tracking parameters
@@ -207,7 +207,7 @@ test.describe('Clean URL Extension E2E Tests', () => {
     expect(cleanedUrl).toContain('utm_source0'); // This should NOT be removed
   });
 
-  test('privacy - no data collection', async ({ page, context }) => {
+  test('privacy - no data collection', async ({ page, context: _context }) => {
     await page.goto('https://example.com?utm_source=sensitive_data&private=info');
     
     // Monitor network requests to ensure no data is sent externally
@@ -237,13 +237,13 @@ test.describe('Clean URL Extension E2E Tests', () => {
 
 test.describe('Extension Settings and Configuration', () => {
   
-  test('extension manifest is valid', async ({ page, context }) => {
+  test('extension manifest is valid', async ({ page: _page, context: _context }) => {
     // This test verifies the extension loads with correct permissions
     // In a real test, you'd check the actual manifest
     expect(true).toBe(true); // Placeholder
   });
 
-  test('extension works in incognito mode', async ({ context }) => {
+  test('extension works in incognito mode', async ({ context: _context }) => {
     // Note: This requires special browser setup for incognito testing
     // Placeholder for incognito mode testing
     expect(true).toBe(true);

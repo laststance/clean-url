@@ -2,17 +2,21 @@
 
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 [![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-Coming%20Soon-blue)](https://chrome.google.com/webstore)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)](https://www.typescriptlang.org/)
+[![Built with WXT](https://img.shields.io/badge/Built%20with-WXT-orange)](https://wxt.dev)
 
-A privacy-focused Chrome extension that removes tracking parameters from URLs with a single click. Protect your privacy by cleaning UTM, social media, and affiliate tracking parameters.
+A privacy-focused Chrome extension that removes tracking parameters from URLs with a single click. Built with WXT framework and TypeScript for a modern, type-safe development experience.
 
 ## 🚀 Features
 
 - **Manual URL Cleaning**: Click the extension icon to clean the current tab's URL
-- **Comprehensive Tracking Removal**: Removes 20+ types of tracking parameters
+- **Comprehensive Tracking Removal**: Removes 25+ types of tracking parameters
 - **Visual Feedback**: Shows badge with tracking parameter count
 - **Copy to Clipboard**: Easily copy cleaned URLs
 - **Privacy First**: All processing happens locally - no data collection
 - **Real-time Analysis**: Instantly see what tracking parameters are found
+- **TypeScript**: Fully type-safe codebase with excellent IDE support
+- **Modern Development**: Hot Module Replacement (HMR) for instant feedback
 
 ## 📋 Supported Tracking Parameters
 
@@ -32,15 +36,18 @@ A privacy-focused Chrome extension that removes tracking parameters from URLs wi
 - `yclid` (Yandex Click ID)
 - `dclid` (DoubleClick Click ID)
 - `msclkid` (Microsoft Click ID)
+- `gad_source`, `gad_campaignid`, `gbraid` (Google Ads)
+- `utm_ad`, `matchtype`, `campaign_id`, `ad_id` (Campaign tracking)
 
 ### Email & Newsletter Trackers
 - `ck_subscriber_id` (ConvertKit)
 - `mc_cid`, `mc_eid` (MailChimp)
+- `_hsenc`, `_hsmi` (HubSpot)
 
 ### Affiliate & Referral Trackers
 - `ref`, `referral`, `affiliate_id`, `click_id`, `subid`, `partner_id`
 
-[View complete list](./clean-url-logic.js#L8-L52)
+[View complete list](./utils/clean-url-logic.ts)
 
 ## 🔧 Installation
 
@@ -56,17 +63,22 @@ A privacy-focused Chrome extension that removes tracking parameters from URLs wi
    cd clean-url
    ```
 
-2. Install dependencies:
+2. Install dependencies (using pnpm):
    ```bash
-   npm install
+   pnpm install
    ```
 
-3. Load the extension in Chrome:
+3. Start development server:
+   ```bash
+   pnpm dev
+   ```
+
+4. Load the extension in Chrome:
    - Open Chrome and go to `chrome://extensions/`
    - Enable "Developer mode"
-   - Click "Load unpacked" and select the project directory
+   - Click "Load unpacked" and select `.output/chrome-mv3` directory
 
-4. The extension icon should appear in your toolbar!
+5. The extension icon should appear in your toolbar with live reloading!
 
 ## 📱 Usage
 
@@ -94,7 +106,7 @@ A privacy-focused Chrome extension that removes tracking parameters from URLs wi
 
 ### Security Best Practices
 - Content Security Policy compliance
-- Minimal permissions (only `tabs` access)
+- Minimal permissions (only `tabs`, `storage`, `contextMenus`)
 - Input validation and sanitization
 - Open source and auditable
 
@@ -102,23 +114,28 @@ A privacy-focused Chrome extension that removes tracking parameters from URLs wi
 
 ### Run Unit Tests
 ```bash
-npm test
+pnpm test
 ```
 
-### Run Unit Tests with Coverage
+### Run Unit Tests with Coverage (93.78%)
 ```bash
-npm run test:coverage
+pnpm test:coverage
 ```
 
 ### Run E2E Tests
 ```bash
-npm run install:playwright
-npm run test:e2e
+pnpm install:playwright
+pnpm test:e2e
 ```
 
-### Run All Tests
+### Run in Watch Mode
 ```bash
-npm run validate
+pnpm test:watch
+```
+
+### Run All Validation
+```bash
+pnpm validate  # Runs lint, tests, and TypeScript checks
 ```
 
 ## 🏗️ Development
@@ -126,48 +143,65 @@ npm run validate
 ### Project Structure
 ```
 clean-url/
-├── manifest.json          # Extension metadata
-├── popup.html             # Popup interface
-├── popup.js               # Popup logic
-├── popup.css              # Popup styling
-├── background.js          # Service worker
-├── clean-url-logic.js     # Core cleaning logic
-├── icons/                 # Extension icons
+├── wxt.config.ts          # WXT framework configuration
+├── tsconfig.json          # TypeScript configuration
+├── vitest.config.ts       # Vitest testing configuration
+├── entrypoints/           # Extension entrypoints (WXT convention)
+│   ├── background.ts      # Service worker
+│   └── popup/             # Popup interface
+│       ├── index.html     # Popup HTML
+│       ├── main.ts        # Popup logic
+│       └── style.css      # Popup styling
+├── utils/                 # Shared utilities
+│   └── clean-url-logic.ts # Core cleaning logic (TypeScript)
+├── public/                # Static assets
+│   ├── icon-*.png         # Extension icons
+│   └── privacy-policy.md  # Privacy policy
 ├── tests/                 # Test suites
-│   ├── unit/              # Jest unit tests
+│   ├── unit/              # Vitest unit tests
 │   ├── e2e/               # Playwright E2E tests
-│   └── test-urls.json     # Test fixtures
-└── docs/                  # Documentation
+│   ├── test-urls.json     # Test fixtures
+│   └── setup.ts           # Test setup
+└── .output/               # Build output
+    └── chrome-mv3/        # Built extension
 ```
 
 ### Key Components
 
-#### Core Logic (`clean-url-logic.js`)
-The heart of the extension. Contains the URL cleaning algorithms and tracking parameter patterns.
+#### Core Logic (`utils/clean-url-logic.ts`)
+TypeScript module containing URL cleaning algorithms and tracking parameter patterns with full type safety.
 
-#### Popup Interface (`popup.html`, `popup.css`, `popup.js`)
-User interface for the extension popup, including URL display, cleaning controls, and feedback.
+#### Popup Interface (`entrypoints/popup/`)
+User interface built with TypeScript, including URL display, cleaning controls, and feedback.
 
-#### Background Service Worker (`background.js`)
-Handles badge updates, context menus, and extension lifecycle events.
+#### Background Service Worker (`entrypoints/background.ts`)
+Handles badge updates, context menus, and extension lifecycle using WXT's `defineBackground` pattern.
+
+### Technology Stack
+- **Framework**: WXT (Web Extension Tools)
+- **Language**: TypeScript 5.9
+- **Testing**: Vitest (unit) + Playwright (E2E)
+- **Build**: Vite (via WXT)
+- **Manifest**: V3 (auto-generated)
+
+### Development Commands
+
+```bash
+pnpm dev              # Start dev server with HMR
+pnpm dev:firefox      # Start dev server for Firefox
+pnpm build            # Build production extension
+pnpm build:firefox    # Build for Firefox
+pnpm zip              # Create distribution ZIP
+pnpm typecheck        # TypeScript type checking
+pnpm lint             # ESLint code quality check
+pnpm validate         # Run all quality checks
+```
 
 ### Adding New Tracking Parameters
-1. Add the parameter to `TRACKING_PARAM_PATTERNS` in `clean-url-logic.js`
+1. Add the parameter to `TRACKING_PARAM_PATTERNS` in `utils/clean-url-logic.ts`
 2. Add test cases to `tests/test-urls.json`
 3. Update this README documentation
-4. Run tests to ensure compatibility
-
-### Build & Validation
-```bash
-# Lint code
-npm run lint
-
-# Run unit tests
-npm run test:unit
-
-# Validate everything
-npm run validate
-```
+4. Run tests to ensure compatibility: `pnpm test`
 
 ## 🤝 Contributing
 
@@ -176,9 +210,9 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 ### Development Setup
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature-name`
-3. Make your changes
+3. Make your changes with TypeScript
 4. Add tests for new functionality
-5. Run the test suite: `npm run validate`
+5. Run the test suite: `pnpm validate`
 6. Commit your changes: `git commit -am 'Add feature'`
 7. Push to the branch: `git push origin feature-name`
 8. Create a Pull Request
@@ -202,14 +236,19 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 
 ## 📊 Statistics
 
-- **Lines of Code**: ~2,000
-- **Test Coverage**: 80%+
+- **Language**: TypeScript
+- **Framework**: WXT
+- **Test Coverage**: 93.78%
 - **Tracking Parameters**: 25+ supported
-- **Bundle Size**: <50KB
+- **Build Size**: ~40KB
+- **Tests**: 163 passing
 
 ## 🎯 Roadmap
 
-- [ ] Firefox extension support
+- [x] TypeScript migration
+- [x] WXT framework integration
+- [x] 90%+ test coverage
+- [ ] Firefox Add-ons publication
 - [ ] Safari extension support
 - [ ] Custom tracking parameter rules
 - [ ] Bulk URL cleaning
@@ -219,7 +258,8 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - Inspired by the need for better online privacy
-- Built with modern web extension standards (Manifest V3)
+- Built with [WXT](https://wxt.dev) - next-generation web extension framework
+- Powered by [Vite](https://vitejs.dev) for blazing fast builds
 - Thanks to the open source community for tools and libraries
 
 ---

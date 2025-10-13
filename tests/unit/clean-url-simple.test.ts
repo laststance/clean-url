@@ -3,12 +3,8 @@
  * Tests the core URL cleaning functionality
  */
 
-const fs = require('fs');
-const path = require('path');
-
-// Load and execute the clean-url-logic
-const cleanUrlLogicCode = fs.readFileSync(path.join(__dirname, '../../clean-url-logic.js'), 'utf8');
-eval(cleanUrlLogicCode);
+import { describe, test, expect } from 'vitest';
+import { cleanUrl, analyzeUrl, isValidUrl } from '../../utils/clean-url-logic';
 
 describe('Clean URL Logic - Core Tests', () => {
   
@@ -231,7 +227,7 @@ describe('Real-world Newsletter URL Tests', () => {
 describe('Input Validation Tests', () => {
   
   test('should handle null input', () => {
-    const result = cleanUrl(null);
+    const result = cleanUrl(null as any);
     
     expect(result.success).toBe(false);
     expect(result.error).toContain('Invalid URL');
@@ -240,7 +236,7 @@ describe('Input Validation Tests', () => {
   });
 
   test('should handle undefined input', () => {
-    const result = cleanUrl(undefined);
+    const result = cleanUrl(undefined as any);
     
     expect(result.success).toBe(false);
     expect(result.error).toContain('Invalid URL');
@@ -317,8 +313,8 @@ describe('Utility Functions', () => {
   test('isValidUrl should reject invalid URLs', () => {
     expect(isValidUrl('not-a-url')).toBe(false);
     expect(isValidUrl('')).toBe(false);
-    expect(isValidUrl(null)).toBe(false);
-    expect(isValidUrl(undefined)).toBe(false);
+    expect(isValidUrl(null as any)).toBe(false);
+    expect(isValidUrl(undefined as any)).toBe(false);
   });
 
   test('analyzeUrl should provide detailed analysis', () => {

@@ -5,6 +5,8 @@
 
 import { test, expect } from '@playwright/test';
 import { ExtensionFixture } from './fixtures.js';
+// eslint-disable-next-line no-unused-vars
+import { cleanUrl, isValidUrl, TRACKING_PARAM_PATTERNS } from '../../utils/clean-url-logic';
 
 test.describe('Service Worker Registration Tests', () => {
   
@@ -54,7 +56,7 @@ test.describe('Service Worker Registration Tests', () => {
     const serviceWorkerTest = await page.evaluate(async () => {
       // Simulate service worker environment
       const originalWindow = window;
-      const originalModule = typeof module !== 'undefined' ? module : undefined;
+      const _originalModule = typeof module !== 'undefined' ? module : undefined;
       
       try {
         // Remove window object to simulate service worker

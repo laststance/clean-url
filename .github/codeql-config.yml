@@ -1,0 +1,27 @@
+name: "CodeQL Configuration"
+
+disable-default-queries: false
+
+queries:
+  - uses: security-and-quality
+  - uses: security-experimental
+
+paths-ignore:
+  - "node_modules"
+  - "coverage"
+  - ".output"
+  - "test-results"
+  - "**/*.test.ts"
+  - "**/*.spec.ts"
+
+paths:
+  - "entrypoints"
+  - "utils"
+  - "wxt.config.ts"
+  - "tsconfig.json"
+
+query-filters:
+  - exclude:
+      problem.severity: "info"
+  - exclude:
+      tags: "test"
