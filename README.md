@@ -1,9 +1,10 @@
 # Clean URL - Chrome Extension
 
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
-[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-Coming%20Soon-blue)](https://chrome.google.com/webstore)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store%20-blue)](https://chromewebstore.google.com/detail/clean-url/konddpmmdjghlicegcfdjehalocbkmpl)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)](https://www.typescriptlang.org/)
 [![Built with WXT](https://img.shields.io/badge/Built%20with-WXT-orange)](https://wxt.dev)
+[![codecov](https://codecov.io/gh/laststance/clean-url/graph/badge.svg?token=67AW0P4XIU)](https://codecov.io/gh/laststance/clean-url)
 
 A privacy-focused Chrome extension that removes tracking parameters from URLs with a single click. Built with WXT framework and TypeScript for a modern, type-safe development experience.
 
