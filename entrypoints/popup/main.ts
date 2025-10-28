@@ -107,7 +107,7 @@ class CleanUrlPopup {
 
   displayResults() {
     // Show original URL
-    this.elements.originalUrl.textContent = this.truncateUrl(this.currentTab!.url);
+    this.elements.originalUrl.textContent = this.truncate(this.currentTab!.url ?? '' ,50,'url');
 
     if (!this.cleaningResult) {
       this.showError('Failed to analyze URL');
@@ -141,7 +141,7 @@ class CleanUrlPopup {
     this.elements.removedCount.textContent = countText;
 
     // Show cleaned URL
-    this.elements.cleanedUrl.textContent = this.truncateUrl(result.cleanedUrl);
+    this.elements.cleanedUrl.textContent = this.truncate(result.cleanedUrl ?? '',50,'url');
 
     // Populate removed parameters list
     this.populateRemovedParams(result.removedParams);
@@ -180,7 +180,7 @@ class CleanUrlPopup {
     const listHtml = removedParams.map(param => `
       <div class="param-item">
         <span class="param-key">${this.escapeHtml(param.key)}</span>
-        <span class="param-value">${this.escapeHtml(this.truncateText(param.value, 30))}</span>
+        <span class="param-value">${this.escapeHtml(this.truncate(param.value, 30, 'text'))}</span>
       </div>
     `).join('');
 
@@ -286,18 +286,14 @@ class CleanUrlPopup {
     this.elements.mainContent.style.display = 'block';
   }
 
-  truncateUrl(url: string | null | undefined, maxLength: number = 50): string {
-    if (!url) return '';
-    if (url.length <= maxLength) return url;
-    
-    const start = url.substring(0, 20);
-    const end = url.substring(url.length - 20);
-    return `${start}...${end}`;
-  }
+  truncate(text: string, maxLength: number, type ='text'){
+    if(!text ||text.length <= maxLength) return text;
 
-  truncateText(text: string, maxLength: number = 30): string {
-    if (!text) return '';
-    if (text.length <= maxLength) return text;
+    if(type === 'url'){
+      const start = text.substring(0, 20);
+      const end = text.substring(text.length - 20);
+      return `${start}...${end}`;
+    }
     return text.substring(0, maxLength) + '...';
   }
 
