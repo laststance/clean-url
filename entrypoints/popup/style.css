@@ -1,5 +1,22 @@
 /* Clean URL Extension - Popup Styles */
 
+/*
+ * Configuration Variables
+ * These values are centralized in utils/config.ts
+ * Keep these CSS custom properties in sync with config.ts
+ */
+:root {
+  /* Colors - from UI.COLORS and BADGE */
+  --color-primary: #667eea;      /* UI.COLORS.PRIMARY / BADGE.DEFAULT_COLOR */
+  --color-primary-dark: #764ba2; /* UI.COLORS.PRIMARY_DARK */
+  --color-success: #48bb78;      /* UI.COLORS.SUCCESS */
+  --color-error: #e53e3e;        /* UI.COLORS.ERROR / BADGE.TRACKING_COLOR */
+
+  /* Dimensions - from UI.DIMENSIONS */
+  --popup-width: 380px;          /* UI.DIMENSIONS.WIDTH */
+  --popup-min-height: 200px;     /* UI.DIMENSIONS.MIN_HEIGHT */
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -12,8 +29,8 @@ body {
   line-height: 1.4;
   color: #2d3748;
   background: #ffffff;
-  width: 380px;
-  min-height: 200px;
+  width: var(--popup-width);
+  min-height: var(--popup-min-height);
   overflow-x: hidden;
 }
 
@@ -25,7 +42,7 @@ body {
 
 /* Header Styles */
 .header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
   color: white;
   padding: 16px 20px;
   text-align: center;
@@ -57,7 +74,7 @@ body {
   width: 32px;
   height: 32px;
   border: 3px solid #e2e8f0;
-  border-top: 3px solid #667eea;
+  border-top: 3px solid var(--color-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 12px;
@@ -109,7 +126,7 @@ body {
 }
 
 .copy-btn {
-  background: #667eea;
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 4px;
@@ -256,7 +273,7 @@ body {
 
 .param-key {
   font-weight: 500;
-  color: #e53e3e;
+  color: var(--color-error);
   flex-shrink: 0;
   margin-right: 8px;
 }
@@ -330,7 +347,7 @@ body {
 }
 
 .footer-link {
-  color: #667eea;
+  color: var(--color-primary);
   text-decoration: none;
   font-size: 12px;
   font-weight: 500;
@@ -368,11 +385,11 @@ body {
 }
 
 .toast.success {
-  background: #48bb78;
+  background: var(--color-success);
 }
 
 .toast.error {
-  background: #e53e3e;
+  background: var(--color-error);
 }
 
 @keyframes slideIn {
@@ -388,8 +405,12 @@ body {
 
 /* Responsive adjustments */
 @media (max-width: 400px) {
+  :root {
+    --popup-width: 320px;
+  }
+
   body {
-    width: 320px;
+    width: var(--popup-width);
   }
   
   .main-content {

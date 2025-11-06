@@ -6,6 +6,7 @@
 // @ts-ignore - WXT global import issue
 declare const defineBackground: any;
 import { cleanUrl, analyzeUrl, type CleanUrlResult, type AnalyzeUrlResult } from '../utils/clean-url-logic';
+import { BADGE } from '../utils/config';
 
 export default defineBackground({
   main: () => {
@@ -205,8 +206,8 @@ async function updateTabBadge(tabId: number, url: string) {
     const result = analyzeUrl(url);
 
     if (result.success && result.removedCount > 0) {
-      const badgeText = result.removedCount > 99 ? '99+' : result.removedCount.toString();
-      await setBadge(tabId, badgeText, '#e53e3e'); // Red background for tracking parameters
+      const badgeText = result.removedCount > BADGE.MAX_COUNT ? '99+' : result.removedCount.toString();
+      await setBadge(tabId, badgeText, BADGE.TRACKING_COLOR); // Red background for tracking parameters
     } else {
       await setBadge(tabId, ''); // Clear badge if no tracking parameters
     }
@@ -230,7 +231,7 @@ async function updateAllTabBadges() {
   }
 }
 
-async function setBadge(tabId: number, text: string, backgroundColor = '#667eea') {
+async function setBadge(tabId: number, text: string, backgroundColor = BADGE.DEFAULT_COLOR) {
   try {
     await chrome.action.setBadgeText({
       text,
