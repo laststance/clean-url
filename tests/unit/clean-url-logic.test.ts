@@ -4,6 +4,7 @@
  */
 
 import { describe, test, expect } from 'vitest';
+
 import { cleanUrl, analyzeUrl, cleanUrls, isValidUrl, TRACKING_PARAM_PATTERNS } from '../../utils/clean-url-logic';
 
 interface TestUrlCase {
@@ -478,7 +479,7 @@ describe('Clean URL Logic', () => {
 // Integration tests with real-world URLs (if test-urls.json contains them)
 describe('Real-world URL tests', () => {
   
-  Object.entries(testUrls).forEach(([testName, testCase]) => {
+  Object.entries(testUrls).forEach(([_testName, testCase]) => {
     test(`should handle ${testCase.description}`, () => {
       const result = cleanUrl(testCase.original);
       

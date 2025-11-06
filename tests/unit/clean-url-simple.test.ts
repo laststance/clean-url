@@ -4,6 +4,7 @@
  */
 
 import { describe, test, expect } from 'vitest';
+
 import { cleanUrl, analyzeUrl, isValidUrl } from '../../utils/clean-url-logic';
 
 describe('Clean URL Logic - Core Tests', () => {

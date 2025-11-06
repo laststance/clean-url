@@ -4,9 +4,11 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { ExtensionFixture } from './fixtures.js';
-// eslint-disable-next-line no-unused-vars
+
 import { cleanUrl, isValidUrl, TRACKING_PARAM_PATTERNS } from '../../utils/clean-url-logic';
+
+import { ExtensionFixture } from './fixtures.js';
+ 
 
 test.describe('Service Worker Registration Tests', () => {
   

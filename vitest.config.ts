@@ -1,5 +1,6 @@
-import { defineConfig } from 'vitest/config';
 import path from 'path';
+
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
@@ -18,7 +19,8 @@ export default defineConfig({
         '**/*.config.*',
         '**/dist/**',
         'entrypoints/**', // Exclude UI and service worker code (tested via E2E)
-        '.eslintrc.cjs' // Exclude ESLint config from coverage
+        '.eslintrc.cjs', // Exclude ESLint config from coverage
+        'utils/config.ts' // Exclude configuration constants
       ],
       thresholds: {
         lines: 80,

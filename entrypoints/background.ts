@@ -5,7 +5,7 @@
 
 // @ts-ignore - WXT global import issue
 declare const defineBackground: any;
-import { cleanUrl, analyzeUrl, type CleanUrlResult, type AnalyzeUrlResult } from '../utils/clean-url-logic';
+import { cleanUrl, analyzeUrl } from '../utils/clean-url-logic';
 import { BADGE } from '../utils/config';
 
 export default defineBackground({
@@ -168,7 +168,7 @@ async function handleContextMenuClick(
   }
 }
 
-async function cleanUrlFromContext(url: string, tab: chrome.tabs.Tab) {
+async function cleanUrlFromContext(url: string, _tab: chrome.tabs.Tab) {
   const result = cleanUrl(url);
 
   if (result.success && result.hasChanges && result.cleanedUrl) {
