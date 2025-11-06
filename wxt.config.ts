@@ -9,7 +9,7 @@ export default defineConfig({
   // Manifest configuration
   manifest: {
     name: 'Clean URL',
-    version: '1.0.3',
+    version: '1.0.5',
     description: 'Remove tracking parameters from URLs with a single click. Cleaning UTM, social media, and affiliate tracking parameters.',
     permissions: ['tabs', 'storage', 'contextMenus'],
     author: { email: 'dojce1048@gmail.com' },
