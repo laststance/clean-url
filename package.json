@@ -22,7 +22,8 @@
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
     "install:playwright": "playwright install",
-    "lint": "eslint \"tests/e2e/**/*.js\"",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "validate": "pnpm lint && pnpm test:unit && pnpm typecheck"
   },
   "devDependencies": {
@@ -31,7 +32,8 @@
     "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
     "bestzip": "^2.2.1",
-    "eslint": "^8.55.0",
+    "eslint": "^9.38.0",
+    "eslint-config-ts-prefixer": "^4.0.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "typescript": "^5.9.3",

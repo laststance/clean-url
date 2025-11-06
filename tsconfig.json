@@ -14,6 +14,7 @@
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
+    "allowJs": true,
     "paths": {
       "@": ["."],
       "@/*": ["./*"],
@@ -29,8 +30,11 @@
     "entrypoints/**/*",
     "utils/**/*",
     "tests/**/*",
+    "*.config.*",
+    "playwright.config.js",
     "wxt.config.ts",
-    "vitest.config.ts"
+    "vitest.config.ts",
+    "playwright.config.ts"
   ],
   "exclude": [
     "node_modules",

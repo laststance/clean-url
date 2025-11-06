@@ -4,6 +4,7 @@
  */
 
 import { test, expect } from '@playwright/test';
+
 import { ExtensionFixture } from './fixtures.js';
 
 test.describe('Clean URL Extension E2E Tests', () => {

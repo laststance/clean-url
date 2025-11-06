@@ -260,7 +260,7 @@ class CleanUrlPopup {
         document.execCommand('copy');
         document.body.removeChild(textArea);
         this.showToast(successMessage, 'success');
-      } catch (fallbackError) {
+      } catch {
         this.showToast('Failed to copy to clipboard', 'error');
       }
     }

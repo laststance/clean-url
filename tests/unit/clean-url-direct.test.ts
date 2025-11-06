@@ -4,6 +4,7 @@
  */
 
 import { describe, test, expect } from 'vitest';
+
 import { cleanUrl, analyzeUrl, cleanUrls, isValidUrl, TRACKING_PARAM_PATTERNS } from '../../utils/clean-url-logic';
 
 interface TestUrlCase {

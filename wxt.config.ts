@@ -1,6 +1,7 @@
-import { defineConfig } from 'wxt';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { defineConfig } from 'wxt';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 

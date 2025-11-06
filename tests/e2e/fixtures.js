@@ -3,11 +3,6 @@
  * Helper utilities for testing Chrome extension functionality with Playwright
  */
 
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename); // eslint-disable-line no-unused-vars
 
 export class ExtensionFixture {
   constructor(context, page) {
@@ -153,9 +148,7 @@ export class ExtensionFixture {
   async getClipboardContent() {
     // Get clipboard content (requires clipboard permissions)
     try {
-      return await this.page.evaluate(async () => {
-        return await navigator.clipboard.readText();
-      });
+      return this.page.evaluate(async () => navigator.clipboard.readText());
     } catch (error) {
       console.warn('Could not read clipboard:', error.message);
       return null;
@@ -167,7 +160,7 @@ export class ExtensionFixture {
     const cleanedUrl = await this.cleanCurrentUrl();
     
     try {
-      await this.page.evaluate((text) => {
+      await this.page.evaluate(async (text) => {
         return navigator.clipboard.writeText(text);
       }, cleanedUrl);
       
