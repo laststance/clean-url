@@ -231,7 +231,7 @@ async function updateAllTabBadges() {
   }
 }
 
-async function setBadge(tabId: number, text: string, backgroundColor = BADGE.DEFAULT_COLOR) {
+async function setBadge(tabId: number, text: string, backgroundColor: string = BADGE.DEFAULT_COLOR) {
   try {
     await chrome.action.setBadgeText({
       text,
