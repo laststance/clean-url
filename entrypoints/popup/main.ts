@@ -4,6 +4,7 @@
  */
 
 import { analyzeUrl, type AnalyzeUrlResult } from '../../utils/clean-url-logic';
+import { UI, URLS } from '../../utils/config';
 
 class CleanUrlPopup {
   currentTab: chrome.tabs.Tab | null = null;
@@ -107,7 +108,7 @@ class CleanUrlPopup {
 
   displayResults() {
     // Show original URL
-    this.elements.originalUrl.textContent = this.truncate(this.currentTab!.url ?? '' ,50,'url');
+    this.elements.originalUrl.textContent = this.truncate(this.currentTab!.url ?? '', UI.TRUNCATE.URL_MAX_LENGTH, 'url');
 
     if (!this.cleaningResult) {
       this.showError('Failed to analyze URL');
@@ -141,7 +142,7 @@ class CleanUrlPopup {
     this.elements.removedCount.textContent = countText;
 
     // Show cleaned URL
-    this.elements.cleanedUrl.textContent = this.truncate(result.cleanedUrl ?? '',50,'url');
+    this.elements.cleanedUrl.textContent = this.truncate(result.cleanedUrl ?? '', UI.TRUNCATE.URL_MAX_LENGTH, 'url');
 
     // Populate removed parameters list
     this.populateRemovedParams(result.removedParams);
@@ -180,7 +181,7 @@ class CleanUrlPopup {
     const listHtml = removedParams.map(param => `
       <div class="param-item">
         <span class="param-key">${this.escapeHtml(param.key)}</span>
-        <span class="param-value">${this.escapeHtml(this.truncate(param.value, 30, 'text'))}</span>
+        <span class="param-value">${this.escapeHtml(this.truncate(param.value, UI.TRUNCATE.PARAM_VALUE_MAX_LENGTH, 'text'))}</span>
       </div>
     `).join('');
 
@@ -230,11 +231,11 @@ class CleanUrlPopup {
       });
 
       this.showToast('Applied cleaned URL!', 'success');
-      
+
       // Close the popup after a short delay
       setTimeout(() => {
         window.close();
-      }, 1000);
+      }, UI.TIMING.APPLY_URL_DELAY);
 
     } catch (error) {
       console.error('Error applying cleaned URL:', error);
@@ -273,12 +274,12 @@ class CleanUrlPopup {
 
     this.elements.toastContainer.appendChild(toast);
 
-    // Remove toast after 3 seconds
+    // Remove toast after configured duration
     setTimeout(() => {
       if (toast.parentNode) {
         toast.parentNode.removeChild(toast);
       }
-    }, 3000);
+    }, UI.TIMING.TOAST_DURATION);
   }
 
   hideLoading() {
@@ -290,8 +291,8 @@ class CleanUrlPopup {
     if(!text ||text.length <= maxLength) return text;
 
     if(type === 'url'){
-      const start = text.substring(0, 20);
-      const end = text.substring(text.length - 20);
+      const start = text.substring(0, UI.TRUNCATE.URL_START_CHARS);
+      const end = text.substring(text.length - UI.TRUNCATE.URL_END_CHARS);
       return `${start}...${end}`;
     }
     return text.substring(0, maxLength) + '...';
@@ -305,13 +306,13 @@ class CleanUrlPopup {
 
   openPrivacyPolicy() {
     chrome.tabs.create({
-              url: 'https://github.com/laststance/clean-url/blob/main/privacy-policy.md'
+      url: URLS.PRIVACY_POLICY
     });
   }
 
   openHelp() {
     chrome.tabs.create({
-              url: 'https://github.com/laststance/clean-url#readme'
+      url: URLS.HELP
     });
   }
 }
