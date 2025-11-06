@@ -348,19 +348,19 @@ describe('Clean URL Logic', () => {
   });
 
   describe('Performance tests', () => {
-    
+
     test('should handle large numbers of parameters efficiently', () => {
       let url = 'https://example.com?regular=param';
-      
+
       // Add 100 tracking parameters (using utm_source repeatedly)
       for (let i = 0; i < 100; i++) {
         url += `&utm_source=test${i}`;
       }
-      
+
       const startTime = performance.now();
       const result = cleanUrl(url);
       const endTime = performance.now();
-      
+
       expect(result.success).toBe(true);
       expect(result.removedCount).toBeGreaterThan(0); // Multiple utm_source params will be merged by URLSearchParams
       expect(endTime - startTime).toBeLessThan(100); // Should complete in under 100ms
@@ -369,12 +369,107 @@ describe('Clean URL Logic', () => {
     test('should handle very long parameter values', () => {
       const longValue = 'x'.repeat(10000);
       const url = `https://example.com?utm_source=${longValue}&regular=param`;
-      
+
       const result = cleanUrl(url);
-      
+
       expect(result.success).toBe(true);
       expect(result.removedCount).toBe(1);
       expect(result.cleanedUrl).toBe('https://example.com/?regular=param');
+    });
+
+  });
+
+  describe('Hash Fragment Edge Cases', () => {
+
+    test('should preserve tracking parameters in hash fragments (case 1)', () => {
+      // Test case 1: Tracking parameters appear only in the hash fragment
+      // Current behavior: hash fragments are preserved as-is
+      const url = 'https://example.com#utm_source=newsletter&fbclid=123';
+      const result = cleanUrl(url);
+
+      expect(result.success).toBe(true);
+      expect(result.cleanedUrl).toBe('https://example.com/#utm_source=newsletter&fbclid=123');
+      expect(result.removedCount).toBe(0); // No query params removed
+      expect(result.cleanedUrl).toContain('#utm_source=newsletter&fbclid=123');
+      expect(result.hasChanges).toBe(false);
+    });
+
+    test('should handle mixed query params and hash with tracking (case 2)', () => {
+      // Test case 2: Valid query params + tracking in hash fragment
+      // Expected: query tracking params removed, hash preserved
+      const url = 'https://example.com?page=2&utm_source=email#fbclid=123&ref=twitter';
+      const result = cleanUrl(url);
+
+      expect(result.success).toBe(true);
+      expect(result.cleanedUrl).toBe('https://example.com/?page=2#fbclid=123&ref=twitter');
+      expect(result.removedCount).toBe(1); // Only utm_source from query
+      expect(result.cleanedUrl).toContain('page=2');
+      expect(result.cleanedUrl).toContain('#fbclid=123&ref=twitter'); // Hash preserved
+      expect(result.hasChanges).toBe(true);
+    });
+
+    test('should preserve hash with URL-encoded tracking parameters (case 3)', () => {
+      // Test case 3: URL-encoded tracking parameters in hash
+      // Current behavior: encoded content in hash is preserved
+      const url = 'https://example.com/article#utm_source%3Dnewsletter%26utm_medium%3Demail';
+      const result = cleanUrl(url);
+
+      expect(result.success).toBe(true);
+      expect(result.cleanedUrl).toBe('https://example.com/article#utm_source%3Dnewsletter%26utm_medium%3Demail');
+      expect(result.removedCount).toBe(0);
+      expect(result.cleanedUrl).toContain('#utm_source%3Dnewsletter%26utm_medium%3Demail');
+      expect(result.hasChanges).toBe(false);
+    });
+
+    test('should handle empty hash after query parameters (case 4)', () => {
+      // Test case 4: Empty hash with trailing # after query params
+      // Note: URL API automatically removes empty hash fragments
+      const url = 'https://example.com?utm_source=test&page=1#';
+      const result = cleanUrl(url);
+
+      expect(result.success).toBe(true);
+      expect(result.cleanedUrl).toBe('https://example.com/?page=1');
+      expect(result.removedCount).toBe(1);
+      expect(result.cleanedUrl).toContain('page=1');
+      expect(result.cleanedUrl).not.toContain('#'); // Empty hash is dropped by URL API
+      expect(result.hasChanges).toBe(true);
+    });
+
+    test('should handle hash-only URL with tracking parameters', () => {
+      // Additional test: hash with tracking on a clean base URL
+      const url = 'https://example.com/#gclid=abc123&utm_campaign=summer';
+      const result = cleanUrl(url);
+
+      expect(result.success).toBe(true);
+      expect(result.cleanedUrl).toBe('https://example.com/#gclid=abc123&utm_campaign=summer');
+      expect(result.removedCount).toBe(0);
+      expect(result.cleanedUrl).toContain('#gclid=abc123&utm_campaign=summer');
+      expect(result.hasChanges).toBe(false);
+    });
+
+    test('should clean query params while preserving complex hash fragments', () => {
+      // Additional test: Multiple tracking params in query, complex hash preserved
+      const url = 'https://example.com?utm_source=google&utm_medium=cpc&utm_campaign=spring&category=shoes#product-reviews?sort=recent&filter=verified';
+      const result = cleanUrl(url);
+
+      expect(result.success).toBe(true);
+      expect(result.cleanedUrl).toBe('https://example.com/?category=shoes#product-reviews?sort=recent&filter=verified');
+      expect(result.removedCount).toBe(3); // 3 UTM params removed from query
+      expect(result.cleanedUrl).toContain('category=shoes');
+      expect(result.cleanedUrl).toContain('#product-reviews?sort=recent&filter=verified');
+      expect(result.hasChanges).toBe(true);
+    });
+
+    test('should handle hash with both regular and tracking-like content', () => {
+      // Additional test: Hash contains content that looks like tracking but is part of SPA routing
+      const url = 'https://app.example.com/dashboard#/analytics?utm_source=internal&section=overview';
+      const result = cleanUrl(url);
+
+      expect(result.success).toBe(true);
+      expect(result.cleanedUrl).toBe('https://app.example.com/dashboard#/analytics?utm_source=internal&section=overview');
+      expect(result.removedCount).toBe(0);
+      expect(result.cleanedUrl).toContain('#/analytics?utm_source=internal&section=overview');
+      expect(result.hasChanges).toBe(false);
     });
 
   });
