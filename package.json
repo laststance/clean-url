@@ -34,8 +34,6 @@
     "bestzip": "^2.2.1",
     "eslint": "^9.39.1",
     "eslint-config-ts-prefixer": "^4.1.0",
-    "jest": "^30.2.0",
-    "jest-environment-jsdom": "^30.2.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.15",
     "wxt": "^0.20.11"
