@@ -9,7 +9,7 @@ This directory contains comprehensive GitHub Actions workflows for the Clean URL
 
 - **Linting & Type Checking:** Validates code quality and TypeScript types
 - **Unit Testing:** Runs all unit tests with Vitest
-- **Build Testing:** Builds extensions for Chrome and Firefox
+- **Build Testing:** Builds extension for Chrome
 - **Artifact Upload:** Saves build artifacts for download
 
 **Coverage:** Integrated with Codecov for test coverage tracking
@@ -23,15 +23,14 @@ This directory contains comprehensive GitHub Actions workflows for the Clean URL
 ### 📦 Build (`build.yml`)
 **Triggers:** Push to `main`, tags (`v*`), manual dispatch
 
-- **Multi-browser Builds:** Creates packages for Chrome and Firefox
-- **ZIP Creation:** Generates distributable ZIP files
-- **Release Assets:** Attaches ZIP files to GitHub releases
-- **Manual Dispatch:** Allows building specific browsers on-demand
+- **Chrome Build:** Creates package for Chrome
+- **ZIP Creation:** Generates distributable ZIP file
+- **Release Assets:** Attaches ZIP file to GitHub releases
 
 ### 🚀 Release (`release.yml`)
 **Triggers:** Push to version tags (`v*`), manual dispatch
 
-- **Automated Publishing:** Submits extensions to Chrome Web Store, Firefox Add-ons, and Edge Add-ons
+- **Automated Publishing:** Submits extension to Chrome Web Store and Edge Add-ons
 - **Multi-store Support:** Handles different store requirements and credentials
 - **Dry Run Mode:** Test publishing without actual submission
 - **Artifact Management:** Downloads and processes build packages
@@ -48,10 +47,9 @@ This directory contains comprehensive GitHub Actions workflows for the Clean URL
 ### 🌐 Browser Compatibility (`browser-compatibility.yml`)
 **Triggers:** Push/PR to `main`, weekly schedule
 
-- **E2E Testing:** Runs Playwright tests on Chrome and Firefox
-- **Manifest Validation:** Ensures generated manifests are valid JSON
+- **E2E Testing:** Runs Playwright tests on Chrome
+- **Manifest Validation:** Ensures generated manifest is valid JSON
 - **Size Checking:** Validates extension size limits (50MB)
-- **Cross-browser Testing:** Verifies functionality across browsers
 
 ## Required Secrets
 
@@ -61,10 +59,6 @@ This directory contains comprehensive GitHub Actions workflows for the Clean URL
 CHROME_CLIENT_ID=your_chrome_client_id
 CHROME_CLIENT_SECRET=your_chrome_client_secret
 CHROME_REFRESH_TOKEN=your_chrome_refresh_token
-
-# Firefox Add-ons
-FIREFOX_JWT_ISSUER=your_firefox_jwt_issuer
-FIREFOX_JWT_SECRET=your_firefox_jwt_secret
 
 # Edge Addons
 EDGE_CLIENT_ID=your_edge_client_id
@@ -112,7 +106,6 @@ CODECOV_TOKEN=your_codecov_token
 ## Browser Support
 
 - **Chrome:** Manifest V3, modern Chrome APIs
-- **Firefox:** Manifest V2 (for compatibility), modern Firefox APIs
 - **Edge:** Chromium-based, same as Chrome build
 
 ## Best Practices

@@ -47,10 +47,6 @@ jobs:
     needs: test
     timeout-minutes: 10
 
-    strategy:
-      matrix:
-        browser: [chrome, firefox]
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -67,14 +63,14 @@ jobs:
 
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
-    - name: Build extension for ${{ matrix.browser }}
-      run: pnpm ${{ matrix.browser == 'chrome' && 'build' || 'build:firefox' }}
+    - name: Build extension for Chrome
+      run: pnpm build
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ matrix.browser }}-extension
-        path: .output/${{ matrix.browser }}-mv3/
+        name: chrome-extension
+        path: .output/chrome-mv3/
         retention-days: 7
 
   package:
@@ -82,10 +78,6 @@ jobs:
     needs: build
     timeout-minutes: 5
 
-    strategy:
-      matrix:
-        browser: [chrome, firefox]
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -102,12 +94,12 @@ jobs:
 
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
-    - name: Create ZIP package for ${{ matrix.browser }}
-      run: pnpm zip${{ matrix.browser == 'firefox' && ':firefox' || '' }}
+    - name: Create ZIP package for Chrome
+      run: pnpm zip
 
     - name: Upload ZIP artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ matrix.browser }}-package
+        name: chrome-package
         path: .output/*.zip
         retention-days: 30

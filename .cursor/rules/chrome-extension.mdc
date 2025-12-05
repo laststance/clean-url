@@ -84,9 +84,7 @@ export default defineBackground({
 
 ### Building
 - `pnpm build` - Production build to `.output/chrome-mv3/`
-- `pnpm build:firefox` - Firefox-specific build
 - `pnpm zip` - Chrome Web Store package
-- `pnpm zip:firefox` - Firefox Add-ons package
 
 ### Loading Extension
 - Load unpacked extension from `.output/chrome-mv3/`
@@ -99,8 +97,7 @@ export default defineBackground({
 - **Input validation** - All URL processing functions validated
 - **CSP compliance** - No unsafe patterns
 
-## Multi-Browser Support
+## Browser Support
 
-- **Chrome primary** - Optimized for Chrome Manifest V3
-- **Firefox support** - Separate build configuration
-- **Safari potential** - WXT framework supports Safari Web Extensions
+- **Chrome** - Optimized for Chrome Manifest V3
+- **Edge** - Chromium-based, compatible with Chrome build

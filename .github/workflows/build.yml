@@ -5,24 +5,11 @@ on:
     branches: [ main ]
     tags: [ 'v*' ]
   workflow_dispatch:
-    inputs:
-      browser:
-        description: 'Browser to build for'
-        required: true
-        default: 'chrome'
-        type: choice
-        options:
-        - chrome
-        - firefox
 
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
-    strategy:
-      matrix:
-        browser: ${{ github.event_name == 'workflow_dispatch' && fromJSON(format('["{0}"]', inputs.browser)) || fromJSON('["chrome", "firefox"]') }}
 
     steps:
     - name: Checkout code
@@ -39,19 +26,14 @@ jobs:
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
 
-    - name: Build extension for ${{ matrix.browser }}
-      run: |
-        if [ "${{ matrix.browser }}" = "firefox" ]; then
-          pnpm build:firefox
-        else
-          pnpm build
-        fi
+    - name: Build extension for Chrome
+      run: pnpm build
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ matrix.browser }}-extension-${{ github.run_id }}
-        path: .output/${{ matrix.browser }}-mv3/
+        name: chrome-extension-${{ github.run_id }}
+        path: .output/chrome-mv3/
         retention-days: 30
 
   package:
@@ -59,10 +41,6 @@ jobs:
     needs: build
     timeout-minutes: 5
 
-    strategy:
-      matrix:
-        browser: ${{ github.event_name == 'workflow_dispatch' && fromJSON(format('["{0}"]', inputs.browser)) || fromJSON('["chrome", "firefox"]') }}
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -79,18 +57,13 @@ jobs:
 
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
-    - name: Create ZIP package for ${{ matrix.browser }}
-      run: |
-        if [ "${{ matrix.browser }}" = "firefox" ]; then
-          pnpm zip:firefox
-        else
-          pnpm zip
-        fi
+    - name: Create ZIP package for Chrome
+      run: pnpm zip
 
     - name: Upload ZIP artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ matrix.browser }}-package-${{ github.run_id }}
+        name: chrome-package-${{ github.run_id }}
         path: .output/*.zip
         retention-days: 90
 

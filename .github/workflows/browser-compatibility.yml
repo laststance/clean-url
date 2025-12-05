@@ -40,43 +40,10 @@ jobs:
     - name: Run E2E tests on Chrome
       run: EXTENSION_PATH=.output/chrome-mv3 pnpm test:e2e
 
-  e2e-firefox:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        version: latest
-
-    - name: Install dependencies
-      run: pnpm install --frozen-lockfile
-
-    - name: Install Playwright browsers
-      run: pnpm install:playwright
-    - name: Build extension for Firefox
-      run: pnpm build:firefox
-
-    - name: Run E2E tests on Firefox
-      run: EXTENSION_PATH=.output/firefox-mv3 pnpm test:e2e
-
   extension-validation:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
-    strategy:
-      matrix:
-        browser: [chrome, firefox]
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -94,26 +61,17 @@ jobs:
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
 
-    - name: Build extension for ${{ matrix.browser }}
-      run: |
-        if [ "${{ matrix.browser }}" = "firefox" ]; then
-          pnpm build:firefox
-        else
-          pnpm build
-        fi
+    - name: Build extension for Chrome
+      run: pnpm build
 
     - name: Install jq
       run: |
         sudo apt-get update
         sudo apt-get install -y jq
 
-    - name: Validate manifest for ${{ matrix.browser }}
+    - name: Validate manifest for Chrome
       run: |
-        if [ "${{ matrix.browser }}" = "firefox" ]; then
-          manifest=".output/firefox-mv3/manifest.json"
-        else
-          manifest=".output/chrome-mv3/manifest.json"
-        fi
+        manifest=".output/chrome-mv3/manifest.json"
 
         echo "Looking for manifest at: $manifest"
 
@@ -131,15 +89,11 @@ jobs:
           exit 1
         fi
 
-        echo "✅ Manifest validation passed for ${{ matrix.browser }}"
+        echo "✅ Manifest validation passed for Chrome"
 
     - name: Check extension size
       run: |
-        if [ "${{ matrix.browser }}" = "firefox" ]; then
-          ext_dir=".output/firefox-mv3"
-        else
-          ext_dir=".output/chrome-mv3"
-        fi
+        ext_dir=".output/chrome-mv3"
 
         size=$(du -sb "$ext_dir" | cut -f1)
         max_size=$((50 * 1024 * 1024)) # 50MB limit
@@ -151,4 +105,4 @@ jobs:
           exit 1
         fi
 
-        echo "✅ Extension size is within limits for ${{ matrix.browser }}"
+        echo "✅ Extension size is within limits for Chrome"

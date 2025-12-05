@@ -189,9 +189,7 @@ Handles badge updates, context menus, and extension lifecycle using WXT's `defin
 
 ```bash
 pnpm dev              # Start dev server with HMR
-pnpm dev:firefox      # Start dev server for Firefox
 pnpm build            # Build production extension
-pnpm build:firefox    # Build for Firefox
 pnpm zip              # Create distribution ZIP
 pnpm typecheck        # TypeScript type checking
 pnpm lint             # ESLint code quality check
@@ -249,7 +247,6 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 - [x] TypeScript migration
 - [x] WXT framework integration
 - [x] 90%+ test coverage
-- [ ] Firefox Add-ons publication
 - [ ] Safari extension support
 - [ ] Custom tracking parameter rules
 - [ ] Bulk URL cleaning
