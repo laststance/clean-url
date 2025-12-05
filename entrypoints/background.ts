@@ -66,7 +66,7 @@ function setupContextMenus() {
       // Create new context menus
       chrome.contextMenus.create({
         id: 'clean-current-url',
-        title: 'Clean current URL',
+        title: 'Open with cleaned URL',
         contexts: ['page'],
         documentUrlPatterns: ['http://*/*', 'https://*/*']
       });
@@ -155,17 +155,40 @@ async function handleContextMenuClick(
   info: chrome.contextMenus.OnClickData,
   tab?: chrome.tabs.Tab
 ) {
-  let urlToClean = '';
+  console.log('Context menu clicked:', info.menuItemId, 'tab:', tab?.id, 'linkUrl:', info.linkUrl);
 
+  // Handle "Clean this link" - opens cleaned URL in NEW tab
+  if (info.menuItemId === 'clean-link-url' && info.linkUrl) {
+    await cleanUrlFromContextWithNavigate(info.linkUrl);
+    return;
+  }
+
+  // Handle "Open with cleaned URL" - updates current tab
   if (info.menuItemId === 'clean-current-url' && tab?.url) {
-    urlToClean = tab.url;
-  } else if (info.menuItemId === 'clean-link-url' && info.linkUrl) {
-    urlToClean = info.linkUrl;
+    const urlToClean = tab.url;
+
+    // If tab is undefined (can happen in MV3), get the current active tab
+    let targetTab = tab;
+    if (!targetTab) {
+      try {
+        const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        targetTab = activeTab;
+        console.log('Retrieved active tab:', targetTab?.id);
+      } catch (error) {
+        console.error('Error getting active tab:', error);
+        return;
+      }
+    }
+
+    if (targetTab) {
+      await cleanUrlFromContext(urlToClean, targetTab);
+    } else {
+      console.error('No target tab available for context menu action');
+    }
+    return;
   }
 
-  if (urlToClean && tab) {
-    await cleanUrlFromContext(urlToClean, tab);
-  }
+  console.log('No URL to clean or unrecognized menu item');
 }
 
 async function cleanUrlFromContext(url: string, tab: chrome.tabs.Tab) {
@@ -190,6 +213,43 @@ async function cleanUrlFromContext(url: string, tab: chrome.tabs.Tab) {
       showNotification(
         'Error',
         'Failed to clean URL'
+      );
+    }
+  } else {
+    showNotification(
+      'Clean URL',
+      'No tracking parameters found in this URL'
+    );
+  }
+}
+
+
+/**
+ * Clean URL from context menu and open in a NEW tab.
+ * Used for "Clean this link" action where user expects new tab behavior.
+ * @param url - The URL to clean (typically a link's href)
+ * @returns Promise that resolves when new tab is created
+ */
+async function cleanUrlFromContextWithNavigate(url: string) {
+  const result = cleanUrl(url);
+
+  if (result.success && result.hasChanges && result.cleanedUrl) {
+    try {
+      // Open cleaned URL in a new tab (expected behavior for link clicks)
+      await chrome.tabs.create({ url: result.cleanedUrl });
+
+      // Also copy cleaned URL to clipboard for convenience
+      await copyToClipboard(result.cleanedUrl);
+
+      showNotification(
+        'URL Cleaned!',
+        `Removed ${result.removedCount} tracking parameters. Opened in new tab.`
+      );
+    } catch (error) {
+      console.error('Error opening cleaned URL in new tab:', error);
+      showNotification(
+        'Error',
+        'Failed to open cleaned URL'
       );
     }
   } else {

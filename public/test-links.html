@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clean URL Extension - Test Links</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+      color: #333;
+    }
+    h1 {
+      color: #2563eb;
+      border-bottom: 2px solid #2563eb;
+      padding-bottom: 10px;
+    }
+    .description {
+      background: #e0f2fe;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .test-case {
+      background: white;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .test-case h3 {
+      margin: 0 0 10px 0;
+      color: #1e40af;
+      font-size: 14px;
+    }
+    .test-case a {
+      display: block;
+      word-break: break-all;
+      color: #2563eb;
+      text-decoration: none;
+      padding: 10px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .test-case a:hover {
+      background: #e0f2fe;
+      border-color: #2563eb;
+    }
+    .expected {
+      font-size: 12px;
+      color: #059669;
+      background: #ecfdf5;
+      padding: 8px;
+      border-radius: 4px;
+      margin-top: 5px;
+    }
+    .expected strong {
+      color: #047857;
+    }
+    .tracking-count {
+      display: inline-block;
+      background: #dc2626;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      margin-left: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Clean URL Extension - Test Links</h1>
+
+  <div class="description">
+    <strong>Instructions:</strong> Right-click on any link below and select "Clean this link" from the context menu.
+    The extension should open a new tab with the cleaned URL (tracking parameters removed).
+  </div>
+
+  <!-- Basic UTM -->
+  <div class="test-case" data-testid="basic-utm">
+    <h3>Basic UTM Parameters <span class="tracking-count">3 trackers</span></h3>
+    <a href="https://example.com?utm_source=google&utm_medium=cpc&utm_campaign=spring_sale" id="link-basic-utm">
+      https://example.com?utm_source=google&utm_medium=cpc&utm_campaign=spring_sale
+    </a>
+    <div class="expected"><strong>Expected:</strong> https://example.com/</div>
+  </div>
+
+  <!-- Facebook Tracking -->
+  <div class="test-case" data-testid="facebook-tracking">
+    <h3>Facebook Click ID <span class="tracking-count">1 tracker</span></h3>
+    <a href="https://example.com/article?fbclid=IwAR0abc123def456" id="link-facebook">
+      https://example.com/article?fbclid=IwAR0abc123def456
+    </a>
+    <div class="expected"><strong>Expected:</strong> https://example.com/article</div>
+  </div>
+
+  <!-- Mixed Parameters -->
+  <div class="test-case" data-testid="mixed-parameters">
+    <h3>Mixed Tracking and Legitimate Parameters <span class="tracking-count">2 trackers</span></h3>
+    <a href="https://shop.example.com/products?category=shoes&utm_source=newsletter&color=red&fbclid=123" id="link-mixed">
+      https://shop.example.com/products?category=shoes&utm_source=newsletter&color=red&fbclid=123
+    </a>
+    <div class="expected"><strong>Expected:</strong> https://shop.example.com/products?category=shoes&color=red</div>
+  </div>
+
+  <!-- ConvertKit Newsletter -->
+  <div class="test-case" data-testid="convertkit">
+    <h3>ConvertKit Subscriber ID <span class="tracking-count">1 tracker</span></h3>
+    <a href="https://www.premieroctet.com/blog/en/tanstack-future-react-frameworks?ck_subscriber_id=1234567890" id="link-convertkit">
+      https://www.premieroctet.com/blog/en/tanstack-future-react-frameworks?ck_subscriber_id=1234567890
+    </a>
+    <div class="expected"><strong>Expected:</strong> https://www.premieroctet.com/blog/en/tanstack-future-react-frameworks</div>
+  </div>
+
+  <!-- GitHub with Tracking -->
+  <div class="test-case" data-testid="github">
+    <h3>GitHub URL with Multiple Trackers <span class="tracking-count">2 trackers</span></h3>
+    <a href="https://github.com/modelcontextprotocol/use-mcp?ck_subscriber_id=abcdef123&utm_source=email" id="link-github">
+      https://github.com/modelcontextprotocol/use-mcp?ck_subscriber_id=abcdef123&utm_source=email
+    </a>
+    <div class="expected"><strong>Expected:</strong> https://github.com/modelcontextprotocol/use-mcp</div>
+  </div>
+
+  <!-- URL with Fragment -->
+  <div class="test-case" data-testid="fragment">
+    <h3>URL with Hash Fragment <span class="tracking-count">2 trackers</span></h3>
+    <a href="https://plainvanillaweb.com/blog/articles/2025-06-12-view-transitions/?ck_subscriber_id=xyz789&utm_medium=social#section-intro" id="link-fragment">
+      https://plainvanillaweb.com/blog/articles/2025-06-12-view-transitions/?ck_subscriber_id=xyz789&utm_medium=social#section-intro
+    </a>
+    <div class="expected"><strong>Expected:</strong> https://plainvanillaweb.com/blog/articles/2025-06-12-view-transitions/#section-intro</div>
+  </div>
+
+  <!-- Google Click ID -->
+  <div class="test-case" data-testid="gclid">
+    <h3>Google Click ID <span class="tracking-count">1 tracker</span></h3>
+    <a href="https://store.example.com?gclid=TeSter-123_abc.def&product=laptop" id="link-gclid">
+      https://store.example.com?gclid=TeSter-123_abc.def&product=laptop
+    </a>
+    <div class="expected"><strong>Expected:</strong> https://store.example.com/?product=laptop</div>
+  </div>
+
+  <!-- Multiple Social Trackers -->
+  <div class="test-case" data-testid="social">
+    <h3>Multiple Social Media Trackers <span class="tracking-count">4 trackers</span></h3>
+    <a href="https://news.example.com/article?fbclid=fb123&igshid=ig456&ttclid=tt789&li_fat_id=li012" id="link-social">
+      https://news.example.com/article?fbclid=fb123&igshid=ig456&ttclid=tt789&li_fat_id=li012
+    </a>
+    <div class="expected"><strong>Expected:</strong> https://news.example.com/article</div>
+  </div>
+
+  <!-- Amazon Product -->
+  <div class="test-case" data-testid="amazon">
+    <h3>Amazon Product with Affiliate Tracking <span class="tracking-count">9 trackers</span></h3>
+    <a href="https://www.amazon.co.jp/dp/B0DCMFWCZT?tag=myaffiliate-22&linkCode=ogi&ascsubtag=abc123&camp=247&creative=1211&pd_rd_i=B0DCMFWCZT&pd_rd_r=12345&pd_rd_w=abcde&pd_rd_wg=xyz123" id="link-amazon">
+      https://www.amazon.co.jp/dp/B0DCMFWCZT?tag=myaffiliate-22&linkCode=ogi&ascsubtag=abc123&camp=247&creative=1211&pd_rd_i=B0DCMFWCZT&pd_rd_r=12345&pd_rd_w=abcde&pd_rd_wg=xyz123
+    </a>
+    <div class="expected"><strong>Expected:</strong> https://www.amazon.co.jp/dp/B0DCMFWCZT</div>
+  </div>
+
+  <!-- No Tracking Params (should remain unchanged) -->
+  <div class="test-case" data-testid="no-tracking">
+    <h3>No Tracking Parameters <span class="tracking-count" style="background: #059669;">0 trackers</span></h3>
+    <a href="https://clean.example.com/page?category=tech&sort=date&page=2" id="link-clean">
+      https://clean.example.com/page?category=tech&sort=date&page=2
+    </a>
+    <div class="expected"><strong>Expected:</strong> https://clean.example.com/page?category=tech&sort=date&page=2 (unchanged)</div>
+  </div>
+
+  <!-- Google Ads Comprehensive -->
+  <div class="test-case" data-testid="google-ads">
+    <h3>Google Ads Comprehensive Tracking <span class="tracking-count">16 trackers</span></h3>
+    <a href="https://mixpanel.com/compare/posthog/?utm_source=google&utm_medium=ppc&utm_campaign=APAC-Competitive-Search-EN-Exact-All-Devices&utm_source=google&utm_medium=cpc&utm_campaign=APAC-Competitive-Search-EN-Exact-All-Devices&utm_content=PostHog&utm_ad=766540614712&utm_term=posthog&matchtype=e&campaign_id=22010460477&ad_id=766540614712&gclid=CjwKCAjwlaTGBhANEiwAoRgXBU1m6NTENxdBAyV7Uj4boyYa-0xpOW9Suhq89T7ZTV7nv0drZKwK8hoCh_0QAvD_BwE&gad_source=1&gad_campaignid=22010460477&gbraid=0AAAAAD85aTZffck7MiJP3pnt5uLyOHmYK" id="link-google-ads">
+      https://mixpanel.com/compare/posthog/?utm_source=google&utm_medium=ppc&...&gclid=...
+    </a>
+    <div class="expected"><strong>Expected:</strong> https://mixpanel.com/compare/posthog/</div>
+  </div>
+
+</body>
+</html>

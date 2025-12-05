@@ -53,14 +53,15 @@ test.describe('Clean URL Extension E2E Tests', () => {
 
   test('URL cleaning functionality works', async ({ page }) => {
     // Start with a URL containing tracking parameters
-    const originalUrl = 'https://example.com/test?utm_source=test&utm_medium=email&product=laptop&fbclid=123';
+    // Use httpbin.org which is designed for testing HTTP requests
+    const originalUrl = 'https://httpbin.org/get?utm_source=test&utm_medium=email&product=laptop&fbclid=123';
     await page.goto(originalUrl);
     
     // Simulate extension popup interaction
     const cleanedUrl = await extensionFixture.cleanCurrentUrl();
     
     // Verify the URL was cleaned
-    expect(cleanedUrl).toBe('https://example.com/test?product=laptop');
+    expect(cleanedUrl).toBe('https://httpbin.org/get?product=laptop');
     expect(cleanedUrl).not.toContain('utm_source');
     expect(cleanedUrl).not.toContain('utm_medium');
     expect(cleanedUrl).not.toContain('fbclid');

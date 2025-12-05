@@ -13,9 +13,9 @@ const __dirname = path.dirname(__filename);
 
 async function globalSetup() {
   console.log('Setting up E2E test environment...');
-  
-  // Get the extension path (project root)
-  const extensionPath = path.resolve(__dirname, '../../');
+
+  // Get the extension path (WXT build output directory)
+  const extensionPath = path.resolve(__dirname, '../../.output/chrome-mv3');
   
   try {
     // Launch browser with extension loaded

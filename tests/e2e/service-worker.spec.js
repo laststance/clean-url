@@ -396,7 +396,7 @@ test.describe('Service Worker Registration Tests', () => {
           const menuItems = [
             {
               id: 'clean-current-url',
-              title: 'Clean current URL',
+              title: 'Open with cleaned URL',
               contexts: ['page'],
               documentUrlPatterns: ['http://*/*', 'https://*/*']
             },
