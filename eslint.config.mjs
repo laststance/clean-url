@@ -32,7 +32,6 @@ export default [
       '**/.wxt/**',
       '**/coverage/**',
       '**/dist/**',
-      'playwright.config.js',
     ],
   },
   ...patchedPrefixer,
