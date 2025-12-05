@@ -6,6 +6,10 @@
 import { analyzeUrl, type AnalyzeUrlResult } from '../../utils/clean-url-logic';
 import { UI, URLS } from '../../utils/config';
 
+// Get extension version from manifest (single source of truth)
+const manifest = chrome.runtime.getManifest();
+const APP_VERSION = manifest.version;
+
 class CleanUrlPopup {
   currentTab: chrome.tabs.Tab | null = null;
   cleaningResult: AnalyzeUrlResult | null = null;
@@ -18,7 +22,18 @@ class CleanUrlPopup {
   async init() {
     this.cacheElements();
     this.attachEventListeners();
+    this.setVersion();
     await this.loadCurrentTab();
+  }
+
+  /**
+   * Sets the version number in the footer from the manifest
+   */
+  setVersion() {
+    const versionElement = document.getElementById('app-version');
+    if (versionElement) {
+      versionElement.textContent = `v${APP_VERSION}`;
+    }
   }
 
   cacheElements() {

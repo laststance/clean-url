@@ -178,5 +178,23 @@
     "expected": "https://blog.logrocket.com/the-next-era-of-react/",
     "expectedRemovedCount": 4,
     "description": "LogRocket blog with tracking params in both query string AND URL-encoded in hash fragment"
+  },
+  "amazon_product_with_affiliate": {
+    "original": "https://www.amazon.com/dp/B09V3KXJPB?tag=example-20&linkCode=ogi&th=1&psc=1",
+    "expected": "https://www.amazon.com/dp/B09V3KXJPB?th=1&psc=1",
+    "expectedRemovedCount": 2,
+    "description": "Amazon product URL with affiliate tag and linkCode"
+  },
+  "amazon_product_full_tracking": {
+    "original": "https://www.amazon.co.jp/dp/B0DCMFWCZT?tag=myaffiliate-22&linkCode=ogi&ascsubtag=abc123&camp=247&creative=1211&pd_rd_i=B0DCMFWCZT&pd_rd_r=12345&pd_rd_w=abcde&pd_rd_wg=xyz123",
+    "expected": "https://www.amazon.co.jp/dp/B0DCMFWCZT",
+    "expectedRemovedCount": 9,
+    "description": "Amazon product URL with all tracking parameters"
+  },
+  "amazon_search_with_tracking": {
+    "original": "https://www.amazon.com/s?k=headphones&tag=partner-20&linkId=abcd1234",
+    "expected": "https://www.amazon.com/s?k=headphones",
+    "expectedRemovedCount": 2,
+    "description": "Amazon search URL with affiliate tracking"
   }
 }

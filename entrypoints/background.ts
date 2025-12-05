@@ -168,17 +168,22 @@ async function handleContextMenuClick(
   }
 }
 
-async function cleanUrlFromContext(url: string, _tab: chrome.tabs.Tab) {
+async function cleanUrlFromContext(url: string, tab: chrome.tabs.Tab) {
   const result = cleanUrl(url);
 
   if (result.success && result.hasChanges && result.cleanedUrl) {
     try {
-      // Copy cleaned URL to clipboard (via storage for popup to access)
+      // Navigate to cleaned URL (primary user feedback)
+      if (tab.id) {
+        await chrome.tabs.update(tab.id, { url: result.cleanedUrl });
+      }
+
+      // Also copy cleaned URL to clipboard for convenience
       await copyToClipboard(result.cleanedUrl);
 
       showNotification(
-        'URL Cleaned & Copied!',
-        `Removed ${result.removedCount} tracking parameters. Cleaned URL copied to clipboard.`
+        'URL Cleaned!',
+        `Removed ${result.removedCount} tracking parameters`
       );
     } catch (error) {
       console.error('Error handling context menu clean:', error);

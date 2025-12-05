@@ -46,6 +46,18 @@ const TRACKING_PARAM_PATTERNS = [
   'sub_id',
   'partner_id',
   'sr_share',   // ShareThis
+
+  // Amazon affiliate & tracking
+  'tag',        // Amazon affiliate tag (most important)
+  'linkCode',   // Amazon Associates link code
+  'linkId',     // Amazon Associates link ID
+  'ascsubtag',  // Amazon affiliate sub-tag
+  'camp',       // Amazon campaign ID
+  'creative',   // Amazon creative/ad ID
+  'pd_rd_i',    // Product detail ranking - item
+  'pd_rd_r',    // Product detail ranking - request
+  'pd_rd_w',    // Product detail ranking - widget
+  'pd_rd_wg',   // Product detail ranking - widget group
   
   // Email & newsletter trackers
   'ck_subscriber_id',  // ConvertKit
@@ -336,7 +348,7 @@ function analyzeUrl(url: string): AnalyzeUrlResult {
       categories.social.push({ key, value });
     } else if (['gclid', 'yclid', 'dclid', 'msclkid', 'gad_source', 'gad_campaignid', 'gbraid', 'utm_ad', 'matchtype', 'campaign_id', 'ad_id'].includes(paramLower)) {
       categories.ads.push({ key, value });
-    } else if (['ref', 'referral', 'affiliate_id', 'afid', 'click_id', 'clickid', 'subid', 'sub_id', 'partner_id', 'sr_share'].includes(paramLower)) {
+    } else if (['ref', 'referral', 'affiliate_id', 'afid', 'click_id', 'clickid', 'subid', 'sub_id', 'partner_id', 'sr_share', 'tag', 'linkcode', 'linkid', 'ascsubtag', 'camp', 'creative', 'pd_rd_i', 'pd_rd_r', 'pd_rd_w', 'pd_rd_wg'].includes(paramLower)) {
       categories.affiliate.push({ key, value });
     } else if (['ck_subscriber_id', 'mc_cid', 'mc_eid', '_hsenc', '_hsmi'].includes(paramLower)) {
       categories.email.push({ key, value });

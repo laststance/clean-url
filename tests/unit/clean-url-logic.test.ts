@@ -362,6 +362,78 @@ describe('Clean URL Logic', () => {
         expect(result.summary.email).toBe(2);
       });
     });
+
+    describe('Amazon affiliate & tracking parameters', () => {
+      test('should remove Amazon affiliate tag and linkCode', () => {
+        const testCase = testUrls.amazon_product_with_affiliate;
+        const result = cleanUrl(testCase.original);
+
+        expect(result.success).toBe(true);
+        expect(result.cleanedUrl).toBe(testCase.expected);
+        expect(result.removedCount).toBe(testCase.expectedRemovedCount);
+        expect(result.cleanedUrl).not.toContain('tag=');
+        expect(result.cleanedUrl).not.toContain('linkCode=');
+        // Verify legitimate Amazon parameters are preserved
+        expect(result.cleanedUrl).toContain('th=1');
+        expect(result.cleanedUrl).toContain('psc=1');
+      });
+
+      test('should remove all Amazon tracking parameters', () => {
+        const testCase = testUrls.amazon_product_full_tracking;
+        const result = cleanUrl(testCase.original);
+
+        expect(result.success).toBe(true);
+        expect(result.cleanedUrl).toBe(testCase.expected);
+        // 9 params: tag, linkCode, ascsubtag, camp, creative, pd_rd_i, pd_rd_r, pd_rd_w, pd_rd_wg
+        expect(result.removedCount).toBe(9);
+        // Verify all Amazon tracking parameters are removed
+        expect(result.cleanedUrl).not.toContain('tag=');
+        expect(result.cleanedUrl).not.toContain('linkCode=');
+        expect(result.cleanedUrl).not.toContain('ascsubtag=');
+        expect(result.cleanedUrl).not.toContain('camp=');
+        expect(result.cleanedUrl).not.toContain('creative=');
+        expect(result.cleanedUrl).not.toContain('pd_rd_');
+      });
+
+      test('should clean Amazon search URL with affiliate tracking', () => {
+        const testCase = testUrls.amazon_search_with_tracking;
+        const result = cleanUrl(testCase.original);
+
+        expect(result.success).toBe(true);
+        expect(result.cleanedUrl).toBe(testCase.expected);
+        expect(result.removedCount).toBe(testCase.expectedRemovedCount);
+        // Verify search query is preserved
+        expect(result.cleanedUrl).toContain('k=headphones');
+      });
+
+      test('should categorize Amazon parameters as affiliate tracking', () => {
+        const url = 'https://amazon.com/dp/B123?tag=test-20&linkCode=abc&camp=123';
+        const result = analyzeUrl(url);
+
+        expect(result.success).toBe(true);
+        expect(result.summary.affiliate).toBe(3);
+        expect(result.categories.affiliate).toHaveLength(3);
+      });
+
+      test('should include Amazon tracking parameter patterns', () => {
+        const amazonParams = [
+          'tag',
+          'linkCode',
+          'linkId',
+          'ascsubtag',
+          'camp',
+          'creative',
+          'pd_rd_i',
+          'pd_rd_r',
+          'pd_rd_w',
+          'pd_rd_wg',
+        ];
+
+        amazonParams.forEach((param) => {
+          expect(TRACKING_PARAM_PATTERNS).toContain(param);
+        });
+      });
+    });
   });
 
   // ============================================================================
