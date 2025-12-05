@@ -172,5 +172,11 @@
     "expected": "https://mixpanel.com/compare/posthog/",
     "expectedRemovedCount": 16,
     "description": "GitHub Issue #1 - Comprehensive Google Ads search URL with utm_ad, matchtype, campaign_id, ad_id parameters (duplicate utm params counted once)"
+  },
+  "logrocket_blog_with_hash_tracking": {
+    "original": "https://blog.logrocket.com/the-next-era-of-react/?ck_subscriber_id=1866526852&utm_source=convertkit&utm_medium=email&utm_campaign=%E2%9A%9B%EF%B8%8F%20This%20Week%20In%20React%20#ck_subscriber_id%3D1866526852%26utm_source%3Dconvertkit%26utm_medium%3Demail%26utm_campaign%3D%25E2%259A%259B%25EF%25B8%258F%2520This%2520Week%2520In%2520React%2520",
+    "expected": "https://blog.logrocket.com/the-next-era-of-react/",
+    "expectedRemovedCount": 4,
+    "description": "LogRocket blog with tracking params in both query string AND URL-encoded in hash fragment"
   }
 }

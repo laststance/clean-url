@@ -78,6 +78,96 @@ function isValidUrl(urlString: string): boolean {
 }
 
 /**
+ * Cleans tracking parameters from a URL hash fragment
+ * Handles cases where tracking params are URL-encoded in the hash (e.g., #utm_source%3Dgoogle)
+ *
+ * @param hashContent - The hash content without the # prefix
+ * @returns Cleaned hash content or null if the entire hash should be removed
+ * @example
+ * cleanHashFragment('section-1') // => 'section-1' (normal anchor preserved)
+ * cleanHashFragment('utm_source%3Dgoogle') // => null (tracking-only hash removed)
+ * cleanHashFragment('utm_source%3Dgoogle%26page%3D1') // => 'page=1' (tracking removed, non-tracking kept)
+ */
+function cleanHashFragment(hashContent: string): string | null {
+  if (!hashContent) {
+    return null;
+  }
+
+  // Try to decode and check if it looks like URL-encoded query parameters
+  let decodedHash: string;
+  try {
+    decodedHash = decodeURIComponent(hashContent);
+  } catch {
+    // If decoding fails, preserve the original hash as-is
+    return hashContent;
+  }
+
+  // SPA routing paths (starting with /) should be preserved as-is
+  if (decodedHash.startsWith('/')) {
+    return hashContent;
+  }
+
+  // Check for specific malformed tracking data patterns (complex campaign hashes)
+  const looksLikeMalformedTracking = hashContent.includes('Vite%20RSC') ||
+                                     hashContent.includes('Next.js') ||
+                                     hashContent.includes('TypeScript') ||
+                                     /^\d+:/.test(hashContent) ||
+                                     /^\d+:/.test(decodedHash);
+
+  if (looksLikeMalformedTracking) {
+    return null;
+  }
+
+  // Check if the decoded hash looks like pure query parameters
+  // Must have = and start with a param name pattern (not include path-like content before =)
+  const hasQueryParamStructure = decodedHash.includes('=');
+  const startsWithPathLikeContent = /^[a-zA-Z0-9_-]+\?/.test(decodedHash); // e.g., "product-reviews?..."
+
+  // If it looks like "anchor?params" format (SPA/hash routing), preserve as-is
+  if (startsWithPathLikeContent) {
+    return hashContent;
+  }
+
+  if (!hasQueryParamStructure) {
+    // No query params structure - preserve as normal anchor
+    return hashContent;
+  }
+
+  // At this point, we have query param structure. Check if ALL first-level keys are tracking params.
+  // Parse as query parameters and filter out tracking params
+  try {
+    const hashParams = new URLSearchParams(decodedHash);
+    const cleanedHashParams = new URLSearchParams();
+    let hasAnyTrackingParam = false;
+
+    for (const [key, value] of hashParams.entries()) {
+      const paramLower = key.toLowerCase();
+      const isTrackingParam = TRACKING_PARAM_PATTERNS.some(pattern =>
+        paramLower === pattern.toLowerCase()
+      );
+
+      if (isTrackingParam) {
+        hasAnyTrackingParam = true;
+      } else {
+        cleanedHashParams.append(key, value);
+      }
+    }
+
+    // If no tracking params found, preserve original hash
+    if (!hasAnyTrackingParam) {
+      return hashContent;
+    }
+
+    // If all params were tracking params, remove the hash entirely
+    const cleanedString = cleanedHashParams.toString();
+    return cleanedString ? cleanedString : null;
+  } catch {
+    // If parsing fails, preserve the original hash
+    return hashContent;
+  }
+}
+
+/**
  * Removes tracking parameters from a URL
  * @param {string} originalUrl - The original URL string
  * @returns {Object} Result object with cleaned URL and metadata
@@ -140,19 +230,15 @@ function cleanUrl(originalUrl: string): CleanUrlResult {
       cleanedUrl.search = cleanedParams.toString();
     }
     
-    // Handle hash fragment - but only if it's not malformed tracking data
+    // Handle hash fragment - clean tracking params from URL-encoded hash content
     if (url.hash) {
-      // Check if the hash looks like malformed tracking data
-      // If it contains tracking-like patterns, it's likely malformed parameter data
       const hashContent = url.hash.slice(1); // Remove the # prefix
-      const looksLikeTrackingData = hashContent.includes('Vite%20RSC') || 
-                                   hashContent.includes('Next.js') ||
-                                   hashContent.includes('TypeScript') ||
-                                   /^\d+:/.test(hashContent); // Starts with number:
-      
-      if (!looksLikeTrackingData) {
-        cleanedUrl.hash = url.hash;
+      const cleanedHash = cleanHashFragment(hashContent);
+
+      if (cleanedHash) {
+        cleanedUrl.hash = '#' + cleanedHash;
       }
+      // If cleanedHash is null, the hash is entirely tracking data and should be omitted
     }
 
     const finalCleanedUrl = cleanedUrl.toString();
@@ -315,5 +401,6 @@ export {
   cleanUrls,
   analyzeUrl,
   isValidUrl,
+  cleanHashFragment,
   TRACKING_PARAM_PATTERNS
 };

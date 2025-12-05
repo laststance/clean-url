@@ -105,7 +105,7 @@ function handleStartup() {
 
 async function handleTabUpdate(
   tabId: number,
-  changeInfo: chrome.tabs.TabChangeInfo,
+  changeInfo: Parameters<Parameters<typeof chrome.tabs.onUpdated.addListener>[0]>[1],
   tab: chrome.tabs.Tab
 ) {
   // Only process when URL changes and is complete
@@ -114,7 +114,7 @@ async function handleTabUpdate(
   }
 }
 
-async function handleTabActivation(activeInfo: chrome.tabs.TabActiveInfo) {
+async function handleTabActivation(activeInfo: Parameters<Parameters<typeof chrome.tabs.onActivated.addListener>[0]>[0]) {
   try {
     const tab = await chrome.tabs.get(activeInfo.tabId);
     if (tab.url) {
