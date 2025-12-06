@@ -91,6 +91,7 @@ jobs:
 
     - name: Setup Chrome Web Store credentials
       run: |
+        echo "CHROME_EXTENSION_ID=${{ secrets.CHROME_EXTENSION_ID }}" >> .env.submit
         echo "CHROME_CLIENT_ID=${{ secrets.CHROME_CLIENT_ID }}" >> .env.submit
         echo "CHROME_CLIENT_SECRET=${{ secrets.CHROME_CLIENT_SECRET }}" >> .env.submit
         echo "CHROME_REFRESH_TOKEN=${{ secrets.CHROME_REFRESH_TOKEN }}" >> .env.submit
@@ -108,8 +109,9 @@ jobs:
   publish-edge:
     runs-on: ubuntu-latest
     needs: build-and-package
-    if: github.event_name == 'push' || github.event.inputs.dry_run == 'false'
+    if: (github.event_name == 'push' || github.event.inputs.dry_run == 'false') && vars.ENABLE_EDGE_PUBLISH == 'true'
     timeout-minutes: 10
+    continue-on-error: true  # Edge publish is optional
 
     steps:
     - name: Checkout code
@@ -158,14 +160,14 @@ jobs:
 
   notify:
     runs-on: ubuntu-latest
-    needs: [publish-chrome, publish-edge]
+    needs: [publish-chrome]
     if: always() && github.event_name == 'push'
 
     steps:
     - name: Notify success
-      if: needs.publish-chrome.result == 'success' || needs.publish-edge.result == 'success'
-      run: echo "✅ Extension published successfully to stores"
+      if: needs.publish-chrome.result == 'success'
+      run: echo "✅ Extension published successfully to Chrome Web Store"
 
     - name: Notify failure
-      if: failure()
-      run: echo "❌ Extension publishing failed"
+      if: needs.publish-chrome.result == 'failure'
+      run: echo "❌ Chrome Web Store publishing failed"
