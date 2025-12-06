@@ -10,6 +10,7 @@ build-storybook.log
 storybook-static
 .env-e
 .swc
+.env.submit
 
 # Docker Volumes
 data
