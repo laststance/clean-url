@@ -38,11 +38,19 @@ jobs:
     - name: Create Chrome ZIP
       run: pnpm zip
 
+    - name: Verify ZIP output
+      run: |
+        echo "📦 Checking .output directory contents:"
+        ls -la .output/
+        echo "📦 ZIP files found:"
+        find .output -name "*.zip" -type f
+
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: extension-packages
-        path: .output/*.zip
+        path: .output/
+        if-no-files-found: error
         retention-days: 90
 
   publish-chrome:
@@ -61,6 +69,12 @@ jobs:
         name: extension-packages
         path: .output/
 
+    - name: List downloaded artifacts
+      run: |
+        echo "📦 Downloaded artifacts:"
+        ls -la .output/
+        find .output -name "*.zip" -type f
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -73,6 +87,7 @@ jobs:
 
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
+
     - name: Setup Chrome Web Store credentials
       run: |
         echo "CHROME_CLIENT_ID=${{ secrets.CHROME_CLIENT_ID }}" >> .env.submit
@@ -105,6 +120,12 @@ jobs:
         name: extension-packages
         path: .output/
 
+    - name: List downloaded artifacts
+      run: |
+        echo "📦 Downloaded artifacts:"
+        ls -la .output/
+        find .output -name "*.zip" -type f
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -117,6 +138,7 @@ jobs:
 
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
+
     - name: Setup Edge Addons credentials
       run: |
         echo "EDGE_CLIENT_ID=${{ secrets.EDGE_CLIENT_ID }}" >> .env.submit
