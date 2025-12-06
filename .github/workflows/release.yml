@@ -51,6 +51,7 @@ jobs:
         name: extension-packages
         path: .output/
         if-no-files-found: error
+        include-hidden-files: true
         retention-days: 90
 
   publish-chrome:
