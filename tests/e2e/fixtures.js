@@ -58,7 +58,7 @@ export class ExtensionFixture {
         'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
         'fbclid', 'gclid', 'yclid', 'dclid', 'msclkid',
         'ck_subscriber_id', 'mc_cid', 'mc_eid',
-        'ref', 'referral', 'affiliate_id', 'click_id'
+        'ref', 'referral', 'referrer', 'affiliate_id', 'click_id'
       ];
 
       try {
@@ -100,7 +100,7 @@ export class ExtensionFixture {
         'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
         'fbclid', 'gclid', 'yclid', 'dclid', 'msclkid',
         'ck_subscriber_id', 'mc_cid', 'mc_eid',
-        'ref', 'referral', 'affiliate_id', 'click_id'
+        'ref', 'referral', 'referrer', 'affiliate_id', 'click_id'
       ];
 
       try {

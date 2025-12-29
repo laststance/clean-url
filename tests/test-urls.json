@@ -196,5 +196,17 @@
     "expected": "https://www.amazon.com/s?k=headphones",
     "expectedRemovedCount": 2,
     "description": "Amazon search URL with affiliate tracking"
+  },
+  "supabase_referrer_tracking": {
+    "original": "https://supabase.com/docs/guides/auth/server-side/creating-a-client?referrer=grok.com",
+    "expected": "https://supabase.com/docs/guides/auth/server-side/creating-a-client",
+    "expectedRemovedCount": 1,
+    "description": "Supabase docs with referrer tracking parameter"
+  },
+  "referrer_with_other_params": {
+    "original": "https://example.com/page?referrer=twitter.com&category=tech&utm_source=social",
+    "expected": "https://example.com/page?category=tech",
+    "expectedRemovedCount": 2,
+    "description": "URL with referrer and UTM tracking, preserving legitimate params"
   }
 }

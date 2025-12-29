@@ -250,6 +250,52 @@ describe('Clean URL Logic', () => {
       });
     });
 
+    describe('Referrer tracking parameters', () => {
+      test('should remove referrer tracking parameter', () => {
+        const testCase = testUrls.supabase_referrer_tracking;
+        const result = cleanUrl(testCase.original);
+
+        expect(result.success).toBe(true);
+        expect(result.cleanedUrl).toBe(testCase.expected);
+        expect(result.removedCount).toBe(testCase.expectedRemovedCount);
+        expect(result.cleanedUrl).not.toContain('referrer=');
+      });
+
+      test('should remove referrer with other tracking params', () => {
+        const testCase = testUrls.referrer_with_other_params;
+        const result = cleanUrl(testCase.original);
+
+        expect(result.success).toBe(true);
+        expect(result.cleanedUrl).toBe(testCase.expected);
+        expect(result.removedCount).toBe(testCase.expectedRemovedCount);
+        expect(result.cleanedUrl).toContain('category=tech');
+        expect(result.cleanedUrl).not.toContain('referrer=');
+        expect(result.cleanedUrl).not.toContain('utm_source');
+      });
+
+      test('should include referrer in tracking patterns', () => {
+        expect(TRACKING_PARAM_PATTERNS).toContain('referrer');
+      });
+
+      test('should categorize referrer as affiliate tracking', () => {
+        const url = 'https://example.com?referrer=twitter.com&ref=partner';
+        const result = analyzeUrl(url);
+
+        expect(result.success).toBe(true);
+        expect(result.summary.affiliate).toBe(2);
+        expect(result.categories.affiliate).toHaveLength(2);
+      });
+
+      test('should handle case-insensitive referrer parameter', () => {
+        const url = 'https://example.com?REFERRER=Google&Referrer=Bing&page=1';
+        const result = cleanUrl(url);
+
+        expect(result.success).toBe(true);
+        expect(result.cleanedUrl).toBe('https://example.com/?page=1');
+        expect(result.removedCount).toBe(2);
+      });
+    });
+
     describe('Email trackers', () => {
       test('should handle ConvertKit subscriber IDs', () => {
         const testCase = testUrls.convertkit_newsletter;
