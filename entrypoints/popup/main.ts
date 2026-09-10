@@ -5,6 +5,7 @@
 
 import { analyzeUrl, type AnalyzeUrlResult } from '../../utils/clean-url-logic';
 import { UI, URLS } from '../../utils/config';
+import { formatMarkdownLink } from '../../utils/format-markdown-link';
 
 // Get extension version from manifest (single source of truth)
 const manifest = chrome.runtime.getManifest();
@@ -41,7 +42,7 @@ class CleanUrlPopup {
       loadingState: document.getElementById('loading-state')!,
       mainContent: document.getElementById('main-content')!,
       originalUrl: document.getElementById('original-url')!,
-      copyOriginal: document.getElementById('copy-original')!,
+      copyMarkdownLink: document.getElementById('copy-markdown-link')!,
       resultsSection: document.getElementById('results-section')!,
       successState: document.getElementById('success-state')!,
       noChangesState: document.getElementById('no-changes-state')!,
@@ -63,8 +64,8 @@ class CleanUrlPopup {
 
   attachEventListeners() {
     // Copy buttons
-    this.elements.copyOriginal.addEventListener('click', () => {
-      this.copyToClipboard(this.currentTab?.url || '', 'Original URL copied!');
+    this.elements.copyMarkdownLink.addEventListener('click', () => {
+      this.copyMarkdownLink();
     });
 
     this.elements.copyCleaned.addEventListener('click', () => {
@@ -86,6 +87,23 @@ class CleanUrlPopup {
       e.preventDefault();
       this.openHelp();
     });
+  }
+
+  /**
+   * Copies the current tab as Markdown via {@link formatMarkdownLink}. Triggered by the Current URL copy button.
+   * @example
+   * this.copyMarkdownLink() // clipboard: '[Example Domain](https://example.com/)'
+   */
+  copyMarkdownLink() {
+    const url = this.currentTab?.url ?? '';
+    if (!url) {
+      this.showToast('No URL to copy', 'error');
+      return;
+    }
+
+    // Tab title is the page name; fall back to URL when Chrome has no title yet
+    const title = this.currentTab?.title?.trim() || url;
+    this.copyToClipboard(formatMarkdownLink(title, url), 'Markdown link copied!');
   }
 
   async loadCurrentTab() {
