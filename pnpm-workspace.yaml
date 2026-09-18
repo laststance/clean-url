@@ -1,2 +1,10 @@
+# pnpm 10 reads onlyBuiltDependencies; pnpm 11+ (CI `version: latest`) requires allowBuilds.
 onlyBuiltDependencies:
   - esbuild
+  - spawn-sync
+  - unrs-resolver
+
+allowBuilds:
+  esbuild: true
+  spawn-sync: true
+  unrs-resolver: true
