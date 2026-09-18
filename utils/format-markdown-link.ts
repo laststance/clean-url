@@ -8,8 +8,8 @@ export function formatMarkdownLink(title: string, url: string): string {
   const rawTitle = title.trim() || url;
   // Collapse whitespace so multi-line tab titles stay on one Markdown line
   const normalizedTitle = rawTitle.replace(/\s+/g, ' ');
-  // Escape `]` so a title like `Foo]Bar` cannot close the link text early
-  const linkTitle = normalizedTitle.replace(/\\/g, '\\\\').replace(/]/g, '\\]');
+  // Escape `\`, `[`, and `]` so titles like `Array[0]` stay one CommonMark link
+  const linkTitle = normalizedTitle.replace(/[\\[\]]/g, '\\$&');
 
   // Angle-bracket destination keeps `(` / `)` in the URL from truncating the link
   if (url.includes('(') || url.includes(')')) {

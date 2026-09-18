@@ -47,7 +47,7 @@ describe('formatMarkdownLink', () => {
     );
   });
 
-  test('escapes closing brackets in the title so the Markdown link stays valid', () => {
+  test('escapes square brackets in the title so CommonMark keeps the whole title as one link', () => {
     // Arrange
     const title = 'Array[0] notes';
     const url = 'https://example.com/notes';
@@ -56,7 +56,19 @@ describe('formatMarkdownLink', () => {
     const markdown = formatMarkdownLink(title, url);
 
     // Assert
-    expect(markdown).toBe('[Array[0\\] notes](https://example.com/notes)');
+    expect(markdown).toBe('[Array\\[0\\] notes](https://example.com/notes)');
+  });
+
+  test('escapes backslashes in the title so they are not treated as Markdown escapes', () => {
+    // Arrange
+    const title = 'C:\\notes\\[draft]';
+    const url = 'https://example.com/notes';
+
+    // Act
+    const markdown = formatMarkdownLink(title, url);
+
+    // Assert
+    expect(markdown).toBe('[C:\\\\notes\\\\\\[draft\\]](https://example.com/notes)');
   });
 
   test('wraps URLs that contain parentheses so the destination does not truncate', () => {
