@@ -150,11 +150,6 @@ body {
   font-size: 14px;
 }
 
-#copy-markdown-link .copy-icon {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  letter-spacing: 0.02em;
-}
-
 /* Status Indicators */
 .status-indicator {
   display: flex;
