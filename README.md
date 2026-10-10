@@ -158,6 +158,8 @@ clean-url/
 ├── public/                # Static assets
 │   ├── icon-*.png         # Extension icons
 │   └── privacy-policy.md  # Privacy policy
+├── scripts/               # Release automation
+│   └── submit-chrome.mjs  # Chrome Web Store API v2 verification and submission
 ├── tests/                 # Test suites
 │   ├── unit/              # Vitest unit tests
 │   ├── e2e/               # Playwright E2E tests
@@ -230,6 +232,7 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 
 - [Chrome Web Store](https://chrome.google.com/webstore) (coming soon)
 - [Privacy Policy](privacy-policy.md)
+- [Release workflows and OAuth maintenance](.github/workflows/README.md)
 - [Bug Reports](https://github.com/laststance/clean-url/issues)
 - [Feature Requests](https://github.com/laststance/clean-url/issues)
 
