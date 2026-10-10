@@ -30,10 +30,12 @@ This directory contains comprehensive GitHub Actions workflows for the Clean URL
 ### 🚀 Release (`release.yml`)
 **Triggers:** Push to version tags (`v*`), manual dispatch
 
-- **Automated Publishing:** Submits extension to Chrome Web Store and Edge Add-ons
-- **Multi-store Support:** Handles different store requirements and credentials
-- **Dry Run Mode:** Test publishing without actual submission
+- **Chrome Store API v2:** [Submission script](../../scripts/submit-chrome.mjs) uploads the package and submits it for review; Google approval and public availability are separate stages
+- **Optional Edge Support:** Enabled only when the `ENABLE_EDGE_PUBLISH` repository variable is `true`
+- **Dry Run Mode:** Exchanges the OAuth refresh token and reads the configured Chrome item status without uploading or submitting, including while an existing revision is pending review
+- **Pending Review Protection:** Stops a real submission when an existing revision is under review
 - **Artifact Management:** Downloads and processes build packages
+- **Release Runtime:** Uses Node.js 24 and the pnpm version declared in `package.json`'s `packageManager` field
 
 ### 🔒 Security (`security.yml`)
 **Triggers:** Push/PR to `main`/`develop`, weekly schedule
@@ -56,6 +58,8 @@ This directory contains comprehensive GitHub Actions workflows for the Clean URL
 ### For Release Workflow
 ```bash
 # Chrome Web Store
+CHROME_EXTENSION_ID=your_32_character_extension_id
+CHROME_PUBLISHER_ID=your_publisher_id_from_store_dashboard_settings
 CHROME_CLIENT_ID=your_chrome_client_id
 CHROME_CLIENT_SECRET=your_chrome_client_secret
 CHROME_REFRESH_TOKEN=your_chrome_refresh_token
@@ -88,8 +92,22 @@ CODECOV_TOKEN=your_codecov_token
 ### Release Process
 1. Create a version tag: `git tag v1.2.3`
 2. Push the tag: `git push origin v1.2.3`
-3. Release workflow automatically builds and publishes to all stores
-4. Use manual dispatch for testing or specific browser releases
+3. Release workflow builds the Chrome ZIP and submits it for review with automatic publication after approval
+4. Use manual dispatch with `dry_run=true` to verify credentials and item access without changing the current Store revision
+
+### Chrome OAuth maintenance
+
+Use the existing Google Cloud OAuth client with the `https://www.googleapis.com/auth/chromewebstore` scope. External OAuth apps in **Testing** issue refresh tokens that expire after seven days. Set the consent screen's publishing status to **In production**, then authorize again to obtain a new refresh token. Production status removes that testing-specific lifetime; tokens can still be revoked or expire for other reasons. See [Google's refresh token expiration rules](https://developers.google.com/identity/protocols/oauth2#expiration).
+
+Save the new client secret and refresh token only as repository Actions secrets. Never commit credentials, print token responses, or include them in workflow artifacts. Preserve an existing client secret until the replacement passes verification. The publisher ID is available in the Chrome Web Store developer dashboard's Settings page.
+
+Verify the saved secrets with:
+
+```bash
+gh workflow run release.yml --ref main -f dry_run=true
+```
+
+The `publish-chrome` job must report `Chrome Store API v2 authentication verified`. A green build alone does not verify credentials. The API v2 submission script replaces v1, whose support [ends on October 15, 2026](https://developer.chrome.com/docs/webstore/api/v1).
 
 ### Manual Operations
 - **Build specific browser:** Use workflow dispatch in GitHub Actions tab

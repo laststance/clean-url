@@ -42,13 +42,15 @@ import { vi } from 'vitest';
   }
 };
 
-// Mock navigator.clipboard for testing
-Object.defineProperty(navigator, 'clipboard', {
-  value: {
-    writeText: vi.fn().mockResolvedValue(undefined)
-  },
-  configurable: true
-});
+// Only browser tests need clipboard mocks; Node release tests have no navigator.
+if (typeof window !== 'undefined') {
+  Object.defineProperty(navigator, 'clipboard', {
+    value: {
+      writeText: vi.fn().mockResolvedValue(undefined)
+    },
+    configurable: true
+  });
+}
 
 // Console error handler for tests
 const originalError = console.error;
