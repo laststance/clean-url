@@ -92,7 +92,7 @@ function isValidUrl(urlString: string): boolean {
 
 /**
  * Cleans tracking parameters from a URL hash fragment
- * Handles cases where tracking params are URL-encoded in the hash (e.g., #utm_source%3Dgoogle)
+ * Called by {@link cleanUrl} when a URL contains a hash, including encoded UTM fields.
  *
  * @param hashContent - The hash content without the # prefix
  * @returns Cleaned hash content or null if the entire hash should be removed
@@ -155,7 +155,8 @@ function cleanHashFragment(hashContent: string): string | null {
 
     for (const [key, value] of hashParams.entries()) {
       const paramLower = key.toLowerCase();
-      const isTrackingParam = TRACKING_PARAM_PATTERNS.some(pattern =>
+      // Include vendor-specific UTM fields such as utm_campaignId.
+      const isTrackingParam = paramLower.startsWith('utm_') || TRACKING_PARAM_PATTERNS.some(pattern =>
         paramLower === pattern.toLowerCase()
       );
 
@@ -181,9 +182,19 @@ function cleanHashFragment(hashContent: string): string | null {
 }
 
 /**
- * Removes tracking parameters from a URL
- * @param {string} originalUrl - The original URL string
- * @returns {Object} Result object with cleaned URL and metadata
+ * Removes tracking parameters and known email link markers from a URL.
+ *
+ * Used by {@link analyzeUrl}, {@link cleanUrls}, and the background actions when
+ * analyzing, copying, or applying a cleaned URL.
+ *
+ * @param originalUrl - The URL to clean while preserving functional parameters and anchors.
+ * @returns The cleaned URL and removal metadata, or an error result for invalid input.
+ *
+ * @example
+ * ```ts
+ * const result = cleanUrl('https://example.com/?utm_campaignId=123&page=2');
+ * // result.cleanedUrl === 'https://example.com/?page=2'
+ * ```
  */
 function cleanUrl(originalUrl: string): CleanUrlResult {
   // Input validation
@@ -222,8 +233,8 @@ function cleanUrl(originalUrl: string): CleanUrlResult {
     for (const [key, value] of originalParams.entries()) {
       const paramLower = key.toLowerCase();
       
-      // Check if this parameter matches any tracking pattern
-      const isTrackingParam = TRACKING_PARAM_PATTERNS.some(pattern => 
+      // Include all UTM fields, including vendor-specific names and casing.
+      const isTrackingParam = paramLower.startsWith('utm_') || TRACKING_PARAM_PATTERNS.some(pattern =>
         paramLower === pattern.toLowerCase()
       );
 
@@ -246,7 +257,15 @@ function cleanUrl(originalUrl: string): CleanUrlResult {
     // Handle hash fragment - clean tracking params from URL-encoded hash content
     if (url.hash) {
       const hashContent = url.hash.slice(1); // Remove the # prefix
-      const cleanedHash = cleanHashFragment(hashContent);
+      // Claude docs email links use this marker without a matching page anchor.
+      const isClaudeEmailMarker = url.hostname === 'platform.claude.com' &&
+        url.pathname.startsWith('/docs/') && hashContent === 'ctaButton';
+      const cleanedHash = isClaudeEmailMarker ? null : cleanHashFragment(hashContent);
+
+      // Count marker-only changes so the popup and badge offer URL cleaning.
+      if (isClaudeEmailMarker) {
+        removedParams.push({ key: url.hash, value: '' });
+      }
 
       if (cleanedHash) {
         cleanedUrl.hash = '#' + cleanedHash;
