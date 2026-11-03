@@ -5,6 +5,12 @@
     "expectedRemovedCount": 3,
     "description": "Basic UTM parameters removal"
   },
+  "claude_managed_agents_email": {
+    "original": "https://platform.claude.com/docs/ja/managed-agents/quickstart?utm_content=hero_cta&utm_source=it&utm_medium=email&utm_campaign=managed_agents_onboarding&utm_term=api&utm_campaignId=12345#ctaButton",
+    "expected": "https://platform.claude.com/docs/ja/managed-agents/quickstart",
+    "expectedRemovedCount": 7,
+    "description": "Claude onboarding email campaign tracking and CTA marker removal"
+  },
   "facebook_tracking": {
     "original": "https://example.com/article?fbclid=IwAR0abc123def456",
     "expected": "https://example.com/article",

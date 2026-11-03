@@ -171,6 +171,42 @@ describe('Clean URL Logic', () => {
   // ============================================================================
   describe('Tracking Parameter Categories', () => {
     describe('UTM parameters', () => {
+      test('removes vendor UTM fields regardless of casing while preserving application IDs', () => {
+        // Arrange
+        const url = 'https://example.com/?UTM_CAMPAIGNID=123&UtM_MessageId=456&utm_id=789&utm_source_platform=email&campaignId=keep&messageId=keep&autm_source=keep#section';
+
+        // Act
+        const result = analyzeUrl(url);
+
+        // Assert
+        expect(result.cleanedUrl).toBe('https://example.com/?campaignId=keep&messageId=keep&autm_source=keep#section');
+        expect(result.removedCount).toBe(4);
+        expect(result.summary.utm).toBe(4);
+      });
+
+      test('removes repeated and empty vendor UTM fields', () => {
+        // Arrange
+        const url = 'https://example.com/?utm_campaignId=&utm_campaignId=123&utm_messageId=&page=2';
+
+        // Act
+        const result = cleanUrl(url);
+
+        // Assert
+        expect(result.cleanedUrl).toBe('https://example.com/?page=2');
+        expect(result.removedCount).toBe(3);
+      });
+
+      test('removes vendor UTM fields from encoded hash parameters while preserving other fields', () => {
+        // Arrange
+        const hash = 'utm_campaignId%3D123%26UTM_MessageId%3D456%26page%3D2';
+
+        // Act
+        const result = cleanHashFragment(hash);
+
+        // Assert
+        expect(result).toBe('page=2');
+      });
+
       test('should remove all UTM parameters', () => {
         const url =
           'https://example.com?utm_source=a&utm_medium=b&utm_campaign=c&utm_term=d&utm_content=e&utm_nooverride=f';
@@ -297,6 +333,66 @@ describe('Clean URL Logic', () => {
     });
 
     describe('Email trackers', () => {
+      test('cleans the Claude Managed Agents email destination including its CTA marker', () => {
+        // Arrange
+        const url = testUrls.claude_managed_agents_email.original;
+
+        // Act
+        const result = analyzeUrl(url);
+
+        // Assert
+        expect(result.cleanedUrl).toBe('https://platform.claude.com/docs/ja/managed-agents/quickstart');
+        expect(result.removedCount).toBe(7);
+        expect(result.hasChanges).toBe(true);
+        expect(result.summary.utm).toBe(6);
+        expect(result.removedParams).toContainEqual({ key: '#ctaButton', value: '' });
+      });
+
+      test('cleans the campaign ID and CTA marker left behind by earlier Clean URL versions', () => {
+        // Arrange
+        const url = 'https://platform.claude.com/docs/ja/managed-agents/quickstart?utm_campaignId=12345#ctaButton';
+
+        // Act
+        const result = cleanUrl(url);
+
+        // Assert
+        expect(result.cleanedUrl).toBe('https://platform.claude.com/docs/ja/managed-agents/quickstart');
+        expect(result.removedCount).toBe(2);
+        expect(result.hasChanges).toBe(true);
+      });
+
+      test('allows applying a cleaned Claude docs URL when only the email CTA marker remains', () => {
+        // Arrange
+        const url = 'https://platform.claude.com/docs/en/managed-agents/quickstart#ctaButton';
+
+        // Act
+        const result = cleanUrl(url);
+
+        // Assert
+        expect(result.cleanedUrl).toBe('https://platform.claude.com/docs/en/managed-agents/quickstart');
+        expect(result.removedCount).toBe(1);
+        expect(result.hasChanges).toBe(true);
+      });
+
+      test.each([
+        ['other websites', 'https://example.com/docs/quickstart#ctaButton'],
+        ['lookalike domains', 'https://platform.claude.com.example.com/docs/quickstart#ctaButton'],
+        ['Claude console pages', 'https://platform.claude.com/workspaces/default#ctaButton'],
+        ['documentation headings', 'https://platform.claude.com/docs/en/managed-agents/quickstart#prerequisites'],
+        ['SPA routes', 'https://platform.claude.com/docs/en/managed-agents/quickstart#/ctaButton'],
+      ])('preserves anchors on %s', (_description, url) => {
+        // Arrange
+        const originalUrl = url;
+
+        // Act
+        const result = cleanUrl(originalUrl);
+
+        // Assert
+        expect(result.cleanedUrl).toBe(url);
+        expect(result.removedCount).toBe(0);
+        expect(result.hasChanges).toBe(false);
+      });
+
       test('should handle ConvertKit subscriber IDs', () => {
         const testCase = testUrls.convertkit_newsletter;
         const result = cleanUrl(testCase.original);

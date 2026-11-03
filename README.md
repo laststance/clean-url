@@ -22,7 +22,7 @@ A privacy-focused Chrome extension that removes tracking parameters from URLs wi
 ## 📋 Supported Tracking Parameters
 
 ### UTM Parameters
-- `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`, `utm_nooverride`
+- All parameters beginning with `utm_` (case-insensitive), including `utm_source`, `utm_medium`, `utm_campaign`, `utm_campaignId`, `utm_messageId`, and `utm_id`
 
 ### Social Media Trackers
 - `fbclid` (Facebook Click ID)
@@ -44,6 +44,7 @@ A privacy-focused Chrome extension that removes tracking parameters from URLs wi
 - `ck_subscriber_id` (ConvertKit)
 - `mc_cid`, `mc_eid` (MailChimp)
 - `_hsenc`, `_hsmi` (HubSpot)
+- `#ctaButton` email link marker on `platform.claude.com/docs/` URLs; anchors on other websites and normal documentation headings are preserved
 
 ### Affiliate & Referral Trackers
 - `ref`, `referral`, `affiliate_id`, `click_id`, `subid`, `partner_id`
