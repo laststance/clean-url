@@ -65,7 +65,9 @@ test.describe('Service Worker Registration Tests', () => {
         delete window.window;
         
         // Load the clean-url-logic.js content (simulated)
-        const cleanUrlLogicCode = `
+        // Install the static fixture directly, without evaluating a string.
+        {
+
           // Simplified version of the tracking parameters
           const TRACKING_PARAM_PATTERNS = [
             'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
@@ -144,10 +146,8 @@ test.describe('Service Worker Registration Tests', () => {
           } else {
             globalThis.CleanUrlLogic = { cleanUrl, isValidUrl, TRACKING_PARAM_PATTERNS };
           }
-        `;
         
-        // Execute the code
-        eval(cleanUrlLogicCode);
+        }
         
         // Test if CleanUrlLogic is available globally
         const isAvailable = typeof CleanUrlLogic !== 'undefined';

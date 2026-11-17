@@ -9,22 +9,40 @@
     "resolveJsonModule": true,
     "strict": true,
     "skipLibCheck": true,
-    "baseUrl": ".",
-    "downlevelIteration": true,
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
     "allowJs": true,
     "paths": {
-      "@": ["."],
-      "@/*": ["./*"],
-      "~": ["."],
-      "~/*": ["./*"],
-      "@@": ["."],
-      "@@/*": ["./*"],
-      "~~": ["."],
-      "~~/*": ["./*"]
-    }
+      "@": [
+        "./"
+      ],
+      "@/*": [
+        "./*"
+      ],
+      "~": [
+        "./"
+      ],
+      "~/*": [
+        "./*"
+      ],
+      "@@": [
+        "./"
+      ],
+      "@@/*": [
+        "./*"
+      ],
+      "~~": [
+        "./"
+      ],
+      "~~/*": [
+        "./*"
+      ]
+    },
+    "types": [
+      "node",
+      "chrome"
+    ]
   },
   "include": [
     "entrypoints/**/*",
