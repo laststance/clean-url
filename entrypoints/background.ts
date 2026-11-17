@@ -59,7 +59,7 @@ export default defineBackground({
   }
 });
 
-function setupContextMenus() {
+function setupContextMenus(): void {
   try {
     // Remove existing context menus first (in case of reload)
     chrome.contextMenus.removeAll(() => {
@@ -83,7 +83,7 @@ function setupContextMenus() {
   }
 }
 
-function handleInstallation(details: chrome.runtime.InstalledDetails) {
+function handleInstallation(details: chrome.runtime.InstalledDetails): void {
   console.log('Clean URL extension installed:', details.reason);
 
   if (details.reason === 'install') {
@@ -98,7 +98,7 @@ function handleInstallation(details: chrome.runtime.InstalledDetails) {
   updateAllTabBadges();
 }
 
-function handleStartup() {
+function handleStartup(): void {
   console.log('Clean URL extension started');
   updateAllTabBadges();
 }
@@ -107,14 +107,14 @@ async function handleTabUpdate(
   tabId: number,
   changeInfo: Parameters<Parameters<typeof chrome.tabs.onUpdated.addListener>[0]>[1],
   tab: chrome.tabs.Tab
-) {
+): Promise<void> {
   // Only process when URL changes and is complete
   if (changeInfo.status === 'complete' && tab.url) {
     await updateTabBadge(tabId, tab.url);
   }
 }
 
-async function handleTabActivation(activeInfo: Parameters<Parameters<typeof chrome.tabs.onActivated.addListener>[0]>[0]) {
+async function handleTabActivation(activeInfo: Parameters<Parameters<typeof chrome.tabs.onActivated.addListener>[0]>[0]): Promise<void> {
   try {
     const tab = await chrome.tabs.get(activeInfo.tabId);
     if (tab.url) {
@@ -125,7 +125,7 @@ async function handleTabActivation(activeInfo: Parameters<Parameters<typeof chro
   }
 }
 
-async function handleActionClick(tab: chrome.tabs.Tab) {
+async function handleActionClick(tab: chrome.tabs.Tab): Promise<void> {
   // Fallback: if popup doesn't open, try to clean URL directly
   console.log('Action clicked, attempting direct URL cleaning');
 
@@ -154,7 +154,7 @@ async function handleActionClick(tab: chrome.tabs.Tab) {
 async function handleContextMenuClick(
   info: chrome.contextMenus.OnClickData,
   tab?: chrome.tabs.Tab
-) {
+): Promise<void> {
   console.log('Context menu clicked:', info.menuItemId, 'tab:', tab?.id, 'linkUrl:', info.linkUrl);
 
   // Handle "Clean this link" - opens cleaned URL in NEW tab
@@ -191,7 +191,7 @@ async function handleContextMenuClick(
   console.log('No URL to clean or unrecognized menu item');
 }
 
-async function cleanUrlFromContext(url: string, tab: chrome.tabs.Tab) {
+async function cleanUrlFromContext(url: string, tab: chrome.tabs.Tab): Promise<void> {
   const result = cleanUrl(url);
 
   if (result.success && result.hasChanges && result.cleanedUrl) {
@@ -230,7 +230,7 @@ async function cleanUrlFromContext(url: string, tab: chrome.tabs.Tab) {
  * @param url - The URL to clean (typically a link's href)
  * @returns Promise that resolves when new tab is created
  */
-async function cleanUrlFromContextWithNavigate(url: string) {
+async function cleanUrlFromContextWithNavigate(url: string): Promise<void> {
   const result = cleanUrl(url);
 
   if (result.success && result.hasChanges && result.cleanedUrl) {
@@ -260,7 +260,7 @@ async function cleanUrlFromContextWithNavigate(url: string) {
   }
 }
 
-async function updateTabBadge(tabId: number, url: string) {
+async function updateTabBadge(tabId: number, url: string): Promise<void> {
   if (!url || (!url.startsWith('http://') && !url.startsWith('https://'))) {
     // Clear badge for non-web pages
     await setBadge(tabId, '');
@@ -282,7 +282,7 @@ async function updateTabBadge(tabId: number, url: string) {
   }
 }
 
-async function updateAllTabBadges() {
+async function updateAllTabBadges(): Promise<void> {
   try {
     const tabs = await chrome.tabs.query({});
 
@@ -296,7 +296,7 @@ async function updateAllTabBadges() {
   }
 }
 
-async function setBadge(tabId: number, text: string, backgroundColor: string = BADGE.DEFAULT_COLOR) {
+async function setBadge(tabId: number, text: string, backgroundColor: string = BADGE.DEFAULT_COLOR): Promise<void> {
   try {
     await chrome.action.setBadgeText({
       text,
@@ -314,14 +314,14 @@ async function setBadge(tabId: number, text: string, backgroundColor: string = B
   }
 }
 
-function showWelcomeNotification() {
+function showWelcomeNotification(): void {
   showNotification(
     'Clean URL Extension Installed!',
     'Click the extension icon to remove tracking parameters from URLs. Your privacy is protected.'
   );
 }
 
-function showNotification(title: string, message: string) {
+function showNotification(title: string, message: string): void {
   // Note: Chrome extensions need the "notifications" permission to show notifications
   // For now, we'll just log to console. Add notifications permission to manifest if needed.
   console.log(`Notification: ${title} - ${message}`);
@@ -337,7 +337,7 @@ function showNotification(title: string, message: string) {
   */
 }
 
-async function copyToClipboard(text: string) {
+async function copyToClipboard(text: string): Promise<void> {
   // Service workers can't directly access clipboard API
   // We'll store it in chrome.storage for the popup to access
   try {

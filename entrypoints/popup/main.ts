@@ -20,7 +20,7 @@ class CleanUrlPopup {
     this.init();
   }
 
-  async init() {
+  async init(): Promise<void> {
     this.cacheElements();
     this.attachEventListeners();
     this.setVersion();
@@ -30,14 +30,14 @@ class CleanUrlPopup {
   /**
    * Sets the version number in the footer from the manifest
    */
-  setVersion() {
+  setVersion(): void {
     const versionElement = document.getElementById('app-version');
     if (versionElement) {
       versionElement.textContent = `v${APP_VERSION}`;
     }
   }
 
-  cacheElements() {
+  cacheElements(): void {
     this.elements = {
       loadingState: document.getElementById('loading-state')!,
       mainContent: document.getElementById('main-content')!,
@@ -62,7 +62,7 @@ class CleanUrlPopup {
     };
   }
 
-  attachEventListeners() {
+  attachEventListeners(): void {
     // Copy buttons
     this.elements.copyMarkdownLink.addEventListener('click', () => {
       this.copyMarkdownLink();
@@ -94,7 +94,7 @@ class CleanUrlPopup {
    * @example
    * this.copyMarkdownLink() // clipboard: '[Example Domain](https://example.com/)'
    */
-  copyMarkdownLink() {
+  copyMarkdownLink(): void {
     const url = this.currentTab?.url ?? '';
     if (!url) {
       this.showToast('No URL to copy', 'error');
@@ -106,7 +106,7 @@ class CleanUrlPopup {
     this.copyToClipboard(formatMarkdownLink(title, url), 'Markdown link copied!');
   }
 
-  async loadCurrentTab() {
+  async loadCurrentTab(): Promise<void> {
     try {
       // Get the current active tab
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -125,7 +125,7 @@ class CleanUrlPopup {
     }
   }
 
-  analyzeUrl(url: string) {
+  analyzeUrl(url: string): void {
     try {
       // Use the URL cleaning logic (now using standard ES module import)
       this.cleaningResult = analyzeUrl(url);
@@ -139,7 +139,7 @@ class CleanUrlPopup {
     }
   }
 
-  displayResults() {
+  displayResults(): void {
     // Show original URL
     this.elements.originalUrl.textContent = this.truncate(this.currentTab!.url ?? '', UI.TRUNCATE.URL_MAX_LENGTH, 'url');
 
@@ -160,7 +160,7 @@ class CleanUrlPopup {
     }
   }
 
-  showSuccessState() {
+  showSuccessState(): void {
     const result = this.cleaningResult;
 
     if (!result) {
@@ -191,13 +191,13 @@ class CleanUrlPopup {
     this.elements.errorState.style.display = 'none';
   }
 
-  showNoChangesState() {
+  showNoChangesState(): void {
     this.elements.successState.style.display = 'none';
     this.elements.noChangesState.style.display = 'block';
     this.elements.errorState.style.display = 'none';
   }
 
-  showError(message: string) {
+  showError(message: string): void {
     this.hideLoading();
     this.elements.errorMessage.textContent = message;
     this.elements.successState.style.display = 'none';
@@ -205,48 +205,73 @@ class CleanUrlPopup {
     this.elements.errorState.style.display = 'block';
   }
 
-  populateRemovedParams(removedParams: Array<{ key: string; value: string }>) {
+  /**
+   * Displays removed query parameters as text after a successful cleanup.
+   *
+   * Called by {@link CleanUrlPopup.showSuccessState}; URL values never become HTML.
+   * @param removedParams - Query keys and values removed from the current URL.
+   * @example
+   * popup.populateRemovedParams([{ key: 'utm_source', value: 'newsletter' }]);
+   */
+  populateRemovedParams(removedParams: Array<{ key: string; value: string }>): void {
+    // Hide the details when the cleanup removed no parameters.
     if (!removedParams || removedParams.length === 0) {
       this.elements.removedParamsDetails.style.display = 'none';
       return;
     }
-
-    const listHtml = removedParams.map(param => `
-      <div class="param-item">
-        <span class="param-key">${this.escapeHtml(param.key)}</span>
-        <span class="param-value">${this.escapeHtml(this.truncate(param.value, UI.TRUNCATE.PARAM_VALUE_MAX_LENGTH, 'text'))}</span>
-      </div>
-    `).join('');
-
-    this.elements.removedParamsList.innerHTML = listHtml;
+    const items = removedParams.map(param => {
+      const item = document.createElement('div');
+      item.className = 'param-item';
+      const key = document.createElement('span');
+      key.className = 'param-key';
+      key.textContent = param.key;
+      const value = document.createElement('span');
+      value.className = 'param-value';
+      value.textContent = this.truncate(param.value, UI.TRUNCATE.PARAM_VALUE_MAX_LENGTH, 'text');
+      item.append(key, value);
+      return item;
+    });
+    this.elements.removedParamsList.replaceChildren(...items);
     this.elements.removedParamsDetails.style.display = 'block';
   }
 
-  showStatistics(summary: { utm: number; social: number; ads: number; affiliate: number; email: number; analytics: number }) {
+  /**
+   * Displays nonzero tracking-category totals after a successful cleanup.
+   *
+   * Called by {@link CleanUrlPopup.showSuccessState} when the result includes a summary.
+   * @param summary - Removed parameter totals grouped by tracking category.
+   * @example
+   * popup.showStatistics({ utm: 1, social: 0, ads: 0, affiliate: 0, email: 0, analytics: 0 });
+   */
+  showStatistics(summary: { utm: number; social: number; ads: number; affiliate: number; email: number; analytics: number }): void {
     const stats = [
       { label: 'UTM', count: summary.utm },
       { label: 'Social', count: summary.social },
       { label: 'Ads', count: summary.ads },
       { label: 'Email', count: summary.email }
     ].filter(stat => stat.count > 0);
-
+    // Keep the section hidden when every displayed category is empty.
     if (stats.length === 0) {
       this.elements.statsSection.style.display = 'none';
       return;
     }
-
-    const statsHtml = stats.map(stat => `
-      <div class="stat-item">
-        <span class="stat-count">${stat.count}</span>
-        <span class="stat-label">${stat.label}</span>
-      </div>
-    `).join('');
-
-    this.elements.statsGrid.innerHTML = statsHtml;
+    const items = stats.map(stat => {
+      const item = document.createElement('div');
+      item.className = 'stat-item';
+      const count = document.createElement('span');
+      count.className = 'stat-count';
+      count.textContent = String(stat.count);
+      const label = document.createElement('span');
+      label.className = 'stat-label';
+      label.textContent = stat.label;
+      item.append(count, label);
+      return item;
+    });
+    this.elements.statsGrid.replaceChildren(...items);
     this.elements.statsSection.style.display = 'block';
   }
 
-  async applyCleanedUrl() {
+  async applyCleanedUrl(): Promise<void> {
     if (!this.cleaningResult || !this.cleaningResult.cleanedUrl) {
       this.showToast('No cleaned URL to apply', 'error');
       return;
@@ -276,7 +301,7 @@ class CleanUrlPopup {
     }
   }
 
-  async copyToClipboard(text: string, successMessage: string = 'Copied to clipboard!') {
+  async copyToClipboard(text: string, successMessage: string = 'Copied to clipboard!'): Promise<void> {
     try {
       await navigator.clipboard.writeText(text);
       this.showToast(successMessage, 'success');
@@ -300,7 +325,7 @@ class CleanUrlPopup {
     }
   }
 
-  showToast(message: string, type: 'info' | 'success' | 'error' = 'info') {
+  showToast(message: string, type: 'info' | 'success' | 'error' = 'info'): void {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     toast.textContent = message;
@@ -315,7 +340,7 @@ class CleanUrlPopup {
     }, UI.TIMING.TOAST_DURATION);
   }
 
-  hideLoading() {
+  hideLoading(): void {
     this.elements.loadingState.style.display = 'none';
     this.elements.mainContent.style.display = 'block';
   }
@@ -337,13 +362,13 @@ class CleanUrlPopup {
     return div.innerHTML;
   }
 
-  openPrivacyPolicy() {
+  openPrivacyPolicy(): void {
     chrome.tabs.create({
       url: URLS.PRIVACY_POLICY
     });
   }
 
-  openHelp() {
+  openHelp(): void {
     chrome.tabs.create({
       url: URLS.HELP
     });

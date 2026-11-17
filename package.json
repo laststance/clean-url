@@ -25,16 +25,20 @@
     "validate": "pnpm lint && pnpm test:unit && pnpm typecheck"
   },
   "devDependencies": {
-    "@playwright/test": "^1.64.1",
-    "@types/chrome": "^0.1.32",
-    "@vitest/coverage-v8": "^4.0.15",
-    "@vitest/ui": "^4.0.15",
-    "bestzip": "^2.2.1",
-    "eslint": "^9.39.1",
-    "eslint-config-ts-prefixer": "^4.1.0",
-    "typescript": "^5.9.3",
-    "vitest": "^4.0.15",
-    "wxt": "^0.20.11"
+    "@playwright/test": "^1.65.1",
+    "@types/chrome": "^0.3.7",
+    "@types/node": "^26.6.6",
+    "@typescript/native": "npm:typescript@^7.0.2",
+    "@vitest/coverage-v8": "^5.1.0",
+    "@vitest/ui": "^5.1.0",
+    "bestzip": "^4.0.3",
+    "eslint": "^10.15.0",
+    "eslint-config-ts-prefixer": "^5.1.0",
+    "eslint-import-resolver-node": "^0.4.0",
+    "jsdom": "^31.0.1",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "vitest": "^5.1.0",
+    "wxt": "^0.21.5"
   },
   "keywords": [
     "chrome-extension",

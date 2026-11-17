@@ -54,7 +54,7 @@ if (typeof window !== 'undefined') {
 
 // Console error handler for tests
 const originalError = console.error;
-console.error = (...args: any[]) => {
+console.error = (...args: any[]): void => {
   // Suppress known warnings/errors during tests
   const message = args[0];
   if (typeof message === 'string') {
